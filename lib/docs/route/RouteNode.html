@@ -1,0 +1,218 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>RouteNode abstract class / route Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="route" data-type="RouteNode">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../route.html">route</a> &rsaquo; <a href="../route/RouteNode.html">RouteNode</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../request.html">request</a></h2><h2><div class="icon-library"></div><a href="../route.html">route</a></h2><ul class="icon">
+<li><a href="../route/PauseStateChangeHandler.html"><div class="icon-interface"></div>PauseStateChangeHandler</a></li>
+<li><div class="icon-class"></div><strong>RouteNode</strong></li>
+<li><a href="../route/RouteStream.html"><div class="icon-class"></div>RouteStream</a></li>
+<li><a href="../route/RouteStreamController.html"><div class="icon-class"></div>RouteStreamController</a></li>
+<li><a href="../route/RouteStreamSink.html"><div class="icon-class"></div>RouteStreamSink</a></li>
+<li><a href="../route/RouteStreamSubscription.html"><div class="icon-class"></div>RouteStreamSubscription</a></li>
+<li><a href="../route/RouteType.html"><div class="icon-class"></div>RouteType</a></li>
+<li><a href="../route/SubscriptionStateChangeHandler.html"><div class="icon-interface"></div>SubscriptionStateChangeHandler</a></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../server.html">server</a></h2><h2><div class="icon-library"></div><a href="../utils.html">utils</a></h2></div>
+<div class="content">
+        <h2><strong>RouteNode</strong>
+          abstract class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+abstract class RouteNode {
+ RouteType type;
+ List&lt;RouteNode&gt; children;
+ List&lt;Middleware&gt; middlewares;
+ List&lt;String&gt; keysNames;
+ RouteNode fatherNode;
+ RouteStreamController controller;
+ String stepName;
+ bool get isClosed;
+
+ factory RouteNode (RouteType type, RouteNode fatherNode, String route) =&gt;
+     new _RouteNode(type, fatherNode, route);
+
+ RouteNode findNode (List&lt;String&gt; routeSteps);
+
+ bool routeRequest (RoutingRequest routingRequest);
+
+ openStream ();
+
+ close (bool closeChildren);
+
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="RouteNode">
+<button class="show-code">Code</button>
+factory <strong>RouteNode</strong>(<a href="../route/RouteType.html">RouteType</a> type, <a href="../route/RouteNode.html">RouteNode</a> fatherNode, <a href="http://api.dartlang.org/dart_core/String.html">String</a> route) <a class="anchor-link" href="#RouteNode"
+              title="Permalink to RouteNode.RouteNode">#</a></h4>
+<div class="doc">
+<pre class="source">
+factory RouteNode (RouteType type, RouteNode fatherNode, String route) =&gt;
+   new _RouteNode(type, fatherNode, route);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="children">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="../route/RouteNode.html">RouteNode</a>&gt;         <strong>children</strong> <a class="anchor-link"
+            href="#children"
+            title="Permalink to RouteNode.children">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+children
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="controller">
+<button class="show-code">Code</button>
+<a href="../route/RouteStreamController.html">RouteStreamController</a>         <strong>controller</strong> <a class="anchor-link"
+            href="#controller"
+            title="Permalink to RouteNode.controller">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+controller
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="fatherNode">
+<button class="show-code">Code</button>
+<a href="../route/RouteNode.html">RouteNode</a>         <strong>fatherNode</strong> <a class="anchor-link"
+            href="#fatherNode"
+            title="Permalink to RouteNode.fatherNode">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+fatherNode
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="isClosed">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <strong>isClosed</strong> <a class="anchor-link"
+            href="#isClosed"
+            title="Permalink to RouteNode.isClosed">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+bool get isClosed;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="keysNames">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>keysNames</strong> <a class="anchor-link"
+            href="#keysNames"
+            title="Permalink to RouteNode.keysNames">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+keysNames
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="middlewares">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="../request/Middleware.html">Middleware</a>&gt;         <strong>middlewares</strong> <a class="anchor-link"
+            href="#middlewares"
+            title="Permalink to RouteNode.middlewares">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+middlewares
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="stepName">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>stepName</strong> <a class="anchor-link"
+            href="#stepName"
+            title="Permalink to RouteNode.stepName">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+stepName
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="type">
+<button class="show-code">Code</button>
+<a href="../route/RouteType.html">RouteType</a>         <strong>type</strong> <a class="anchor-link"
+            href="#type"
+            title="Permalink to RouteNode.type">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+type
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="close">
+abstract <strong>close</strong>(<a href="http://api.dartlang.org/dart_core/bool.html">bool</a> closeChildren) <a class="anchor-link" href="#close"
+              title="Permalink to RouteNode.close">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="findNode">
+abstract <a href="../route/RouteNode.html">RouteNode</a> <strong>findNode</strong>(<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; routeSteps) <a class="anchor-link" href="#findNode"
+              title="Permalink to RouteNode.findNode">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="openStream">
+abstract <strong>openStream</strong>() <a class="anchor-link" href="#openStream"
+              title="Permalink to RouteNode.openStream">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="routeRequest">
+abstract <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> <strong>routeRequest</strong>(<a href="../request/RoutingRequest.html">RoutingRequest</a> routingRequest) <a class="anchor-link" href="#routeRequest"
+              title="Permalink to RouteNode.routeRequest">#</a></h4>
+<div class="doc">
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-08 17:34:12.176</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        

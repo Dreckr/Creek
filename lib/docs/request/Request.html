@@ -1,0 +1,247 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Request class / request Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="request" data-type="Request">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../request.html">request</a> &rsaquo; <a href="../request/Request.html">Request</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../request.html">request</a></h2><ul class="icon">
+<li><a href="../request/Middleware.html"><div class="icon-class"></div>Middleware</a></li>
+<li><div class="icon-class"></div><strong>Request</strong></li>
+<li><a href="../request/Response.html"><div class="icon-class"></div>Response</a></li>
+<li><a href="../request/RoutingRequest.html"><div class="icon-class"></div>RoutingRequest</a></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../route.html">route</a></h2><h2><div class="icon-library"></div><a href="../server.html">server</a></h2><h2><div class="icon-library"></div><a href="../utils.html">utils</a></h2></div>
+<div class="content">
+        <h2><strong>Request</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class Request {
+ HttpRequest httpRequest;
+ Map&lt;String, String&gt; keys = new Map&lt;String, String&gt;();
+ Response response;
+ HashMap get params =&gt; httpRequest.queryParameters;
+ bool get isForwarded =&gt; httpRequest.headers['x-forwarded-host'] != null;
+ Uri get uri =&gt; httpRequest.uri;
+ String get path =&gt; uri.path;
+ String get method =&gt; httpRequest.method;
+
+ Request (httpRequest) : this.httpRequest = httpRequest, this.response = new Response(httpRequest.response);
+
+ header(String name, [value]) {
+   var header;
+   if (value == null) {
+     header = httpRequest.headers[name];
+
+     if (header == null) {
+       header = keys[name];
+     }
+
+     return header;
+   }
+
+   keys[name] = value;
+   return this;
+ }
+
+ bool accepts(String type) =&gt;
+     httpRequest.headers['accept'].any((name) =&gt; name.split(',').indexOf(type) &gt; -1 );
+
+ bool isMime(String type) =&gt;
+     httpRequest.headers['content-type'].where((value) =&gt; value == type).length &gt; 0;
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="Request">
+<button class="show-code">Code</button>
+new <strong>Request</strong>(httpRequest) <a class="anchor-link" href="#Request"
+              title="Permalink to Request.Request">#</a></h4>
+<div class="doc">
+<pre class="source">
+Request (httpRequest) : this.httpRequest = httpRequest, this.response = new Response(httpRequest.response);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="httpRequest">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_io/HttpRequest.html">HttpRequest</a>         <strong>httpRequest</strong> <a class="anchor-link"
+            href="#httpRequest"
+            title="Permalink to Request.httpRequest">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+httpRequest
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="isForwarded">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <strong>isForwarded</strong> <a class="anchor-link"
+            href="#isForwarded"
+            title="Permalink to Request.isForwarded">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+bool get isForwarded =&gt; httpRequest.headers['x-forwarded-host'] != null;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="keys">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>, <a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>keys</strong> <a class="anchor-link"
+            href="#keys"
+            title="Permalink to Request.keys">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+keys = new Map&lt;String, String&gt;()
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="method">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>method</strong> <a class="anchor-link"
+            href="#method"
+            title="Permalink to Request.method">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String get method =&gt; httpRequest.method;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="params">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_collection/HashMap.html">HashMap</a>         <strong>params</strong> <a class="anchor-link"
+            href="#params"
+            title="Permalink to Request.params">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+HashMap get params =&gt; httpRequest.queryParameters;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="path">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>path</strong> <a class="anchor-link"
+            href="#path"
+            title="Permalink to Request.path">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String get path =&gt; uri.path;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="response">
+<button class="show-code">Code</button>
+<a href="../request/Response.html">Response</a>         <strong>response</strong> <a class="anchor-link"
+            href="#response"
+            title="Permalink to Request.response">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+response
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="uri">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_uri/Uri.html">Uri</a>         <strong>uri</strong> <a class="anchor-link"
+            href="#uri"
+            title="Permalink to Request.uri">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Uri get uri =&gt; httpRequest.uri;
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="accepts">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/bool.html">bool</a> <strong>accepts</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> type) <a class="anchor-link" href="#accepts"
+              title="Permalink to Request.accepts">#</a></h4>
+<div class="doc">
+<pre class="source">
+bool accepts(String type) =&gt;
+   httpRequest.headers['accept'].any((name) =&gt; name.split(',').indexOf(type) &gt; -1 );
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="header">
+<button class="show-code">Code</button>
+<strong>header</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name, [value]) <a class="anchor-link" href="#header"
+              title="Permalink to Request.header">#</a></h4>
+<div class="doc">
+<pre class="source">
+header(String name, [value]) {
+ var header;
+ if (value == null) {
+   header = httpRequest.headers[name];
+
+   if (header == null) {
+     header = keys[name];
+   }
+
+   return header;
+ }
+
+ keys[name] = value;
+ return this;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="isMime">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/bool.html">bool</a> <strong>isMime</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> type) <a class="anchor-link" href="#isMime"
+              title="Permalink to Request.isMime">#</a></h4>
+<div class="doc">
+<pre class="source">
+bool isMime(String type) =&gt;
+   httpRequest.headers['content-type'].where((value) =&gt; value == type).length &gt; 0;
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-08 17:34:12.073</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        

@@ -1,0 +1,115 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>RoutingRequest class / request Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="request" data-type="RoutingRequest">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../request.html">request</a> &rsaquo; <a href="../request/RoutingRequest.html">RoutingRequest</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../request.html">request</a></h2><ul class="icon">
+<li><a href="../request/Middleware.html"><div class="icon-class"></div>Middleware</a></li>
+<li><a href="../request/Request.html"><div class="icon-class"></div>Request</a></li>
+<li><a href="../request/Response.html"><div class="icon-class"></div>Response</a></li>
+<li><div class="icon-class"></div><strong>RoutingRequest</strong></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../route.html">route</a></h2><h2><div class="icon-library"></div><a href="../server.html">server</a></h2><h2><div class="icon-library"></div><a href="../utils.html">utils</a></h2></div>
+<div class="content">
+        <h2><strong>RoutingRequest</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class RoutingRequest {
+ Request request;
+ List&lt;String&gt; routeSteps;
+ List&lt;String&gt; keys = [];
+
+ RoutingRequest (HttpRequest httpRequest) :
+   this.request = new Request(httpRequest),
+   this.routeSteps = createRouteSteps(httpRequest.uri.path);
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="RoutingRequest">
+<button class="show-code">Code</button>
+new <strong>RoutingRequest</strong>(<a href="http://api.dartlang.org/dart_io/HttpRequest.html">HttpRequest</a> httpRequest) <a class="anchor-link" href="#RoutingRequest"
+              title="Permalink to RoutingRequest.RoutingRequest">#</a></h4>
+<div class="doc">
+<pre class="source">
+RoutingRequest (HttpRequest httpRequest) :
+ this.request = new Request(httpRequest),
+ this.routeSteps = createRouteSteps(httpRequest.uri.path);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="keys">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>keys</strong> <a class="anchor-link"
+            href="#keys"
+            title="Permalink to RoutingRequest.keys">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+keys = []
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="request">
+<button class="show-code">Code</button>
+<a href="../request/Request.html">Request</a>         <strong>request</strong> <a class="anchor-link"
+            href="#request"
+            title="Permalink to RoutingRequest.request">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+request
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="routeSteps">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>routeSteps</strong> <a class="anchor-link"
+            href="#routeSteps"
+            title="Permalink to RoutingRequest.routeSteps">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+routeSteps
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-08 17:34:12.077</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        

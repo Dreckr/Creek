@@ -1,0 +1,191 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>RouteServer abstract class / server Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="server" data-type="RouteServer">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../server.html">server</a> &rsaquo; <a href="../server/RouteServer.html">RouteServer</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../request.html">request</a></h2><h2><div class="icon-library"></div><a href="../route.html">route</a></h2><h2><div class="icon-library"></div><a href="../server.html">server</a></h2><ul class="icon">
+<li><div class="icon-class"></div><strong>RouteServer</strong></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../utils.html">utils</a></h2></div>
+<div class="content">
+        <h2><strong>RouteServer</strong>
+          abstract class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+abstract class RouteServer {
+ String address;
+ int port;
+ int backlog;
+ bool get isRunning;
+
+ factory RouteServer ([String address = '127.0.0.1', int port = 0, int backlog = 0]) =&gt;
+     new _RouteServerImpl(address, port, backlog);
+
+ RouteStream delete (String path, [void handler (Request req, Response res)]);
+
+ RouteStream get (String path, [void handler (Request req, Response res)]);
+
+ RouteStream post (String path, [void handler (Request req, Response res)]);
+
+ RouteStream put (String path, [void handler (Request req, Response res)]);
+
+ notFound (void notFoundHandler (Request req, Response res));
+
+ route (HttpRequest httpRequest);
+
+ Future&lt;RouteServer&gt; run ();
+
+ close ();
+
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="RouteServer">
+<button class="show-code">Code</button>
+factory <strong>RouteServer</strong>([<a href="http://api.dartlang.org/dart_core/String.html">String</a> address = '127.0.0.1', <a href="http://api.dartlang.org/dart_core/int.html">int</a> port = 0, <a href="http://api.dartlang.org/dart_core/int.html">int</a> backlog = 0]) <a class="anchor-link" href="#RouteServer"
+              title="Permalink to RouteServer.RouteServer">#</a></h4>
+<div class="doc">
+<pre class="source">
+factory RouteServer ([String address = '127.0.0.1', int port = 0, int backlog = 0]) =&gt;
+   new _RouteServerImpl(address, port, backlog);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="address">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>address</strong> <a class="anchor-link"
+            href="#address"
+            title="Permalink to RouteServer.address">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+address
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="backlog">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/int.html">int</a>         <strong>backlog</strong> <a class="anchor-link"
+            href="#backlog"
+            title="Permalink to RouteServer.backlog">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+backlog
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="isRunning">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <strong>isRunning</strong> <a class="anchor-link"
+            href="#isRunning"
+            title="Permalink to RouteServer.isRunning">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+bool get isRunning;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="port">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/int.html">int</a>         <strong>port</strong> <a class="anchor-link"
+            href="#port"
+            title="Permalink to RouteServer.port">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+port
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="close">
+abstract <strong>close</strong>() <a class="anchor-link" href="#close"
+              title="Permalink to RouteServer.close">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="delete">
+abstract <a href="../route/RouteStream.html">RouteStream</a> <strong>delete</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#delete"
+              title="Permalink to RouteServer.delete">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="get">
+abstract <a href="../route/RouteStream.html">RouteStream</a> <strong>get</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#get"
+              title="Permalink to RouteServer.get">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="notFound">
+abstract <strong>notFound</strong>(void notFoundHandler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)) <a class="anchor-link" href="#notFound"
+              title="Permalink to RouteServer.notFound">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="post">
+abstract <a href="../route/RouteStream.html">RouteStream</a> <strong>post</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#post"
+              title="Permalink to RouteServer.post">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="put">
+abstract <a href="../route/RouteStream.html">RouteStream</a> <strong>put</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#put"
+              title="Permalink to RouteServer.put">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="route">
+abstract <strong>route</strong>(<a href="http://api.dartlang.org/dart_io/HttpRequest.html">HttpRequest</a> httpRequest) <a class="anchor-link" href="#route"
+              title="Permalink to RouteServer.route">#</a></h4>
+<div class="doc">
+</div>
+</div>
+<div class="method"><h4 id="run">
+abstract <a href="http://api.dartlang.org/dart_async/Future.html">Future</a>&lt;<a href="../server/RouteServer.html">RouteServer</a>&gt; <strong>run</strong>() <a class="anchor-link" href="#run"
+              title="Permalink to RouteServer.run">#</a></h4>
+<div class="doc">
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-08 17:34:12.185</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        

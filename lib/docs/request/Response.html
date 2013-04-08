@@ -1,0 +1,319 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Response class / request Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="request" data-type="Response">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../request.html">request</a> &rsaquo; <a href="../request/Response.html">Response</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../request.html">request</a></h2><ul class="icon">
+<li><a href="../request/Middleware.html"><div class="icon-class"></div>Middleware</a></li>
+<li><a href="../request/Request.html"><div class="icon-class"></div>Request</a></li>
+<li><div class="icon-class"></div><strong>Response</strong></li>
+<li><a href="../request/RoutingRequest.html"><div class="icon-class"></div>RoutingRequest</a></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../route.html">route</a></h2><h2><div class="icon-library"></div><a href="../server.html">server</a></h2><h2><div class="icon-library"></div><a href="../utils.html">utils</a></h2></div>
+<div class="content">
+        <h2><strong>Response</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class Response {
+ HttpResponse httpResponse;
+ int get status =&gt; httpResponse.statusCode;
+ set status (code) =&gt; httpResponse.statusCode = code;
+
+ Response (this.httpResponse);
+
+ header(String name, [value]) {
+   if (value == null) {
+     return httpResponse.headers[name];
+   }
+
+   httpResponse.headers.set(name, value);
+   return this;
+ }
+
+ Response get (String name) =&gt; header(name);
+
+ Response set (name, value) =&gt; header(name, value);
+
+ Response get type =&gt; get('Content-type');
+          set type (contentType) =&gt; set('Content-Type', contentType);
+
+ Response cache(String cacheType, [Map options]) {
+   if(options == null) {
+     options = {};
+   }
+   StringBuffer value = new StringBuffer(cacheType);
+   options.forEach((key, val) {
+     value.write(', ${key}=${val}');
+   });
+   return set('Cache-Control', value.toString());
+ }
+
+/*
+ Response cookie(name, val, [Map options]) {
+   if (options == null) {
+     options = {};
+   }
+   options['name'] = name;
+   options['value'] = val;
+   var cookieHeader = Cookie.stringify(options);
+   return header('Set-Cookie', cookieHeader);
+ }
+ */
+
+ /*
+ Response deleteCookie(name) {
+   Map options = { 'expires': 'Thu, 01-Jan-70 00:00:01 GMT', 'path': '/' };
+   return cookie(name, '', options);
+ }*/
+
+ // To close or not to close?
+ send (String string) {
+   httpResponse.write(string);
+   httpResponse.close();
+ }
+
+ sendFile (path) {
+   var file = new File(path);
+   file.exists().then((found) {
+     if (found) {
+       httpResponse.consume(file.openRead());
+     } else {
+       httpResponse.statusCode = HttpStatus.NOT_FOUND;
+       httpResponse.close();
+     }
+   });
+ }
+
+ json (Map data) {
+   send(stringify(data));
+ }
+
+ redirect (url, [int code = 302]) {
+   httpResponse.statusCode = code;
+   header('Location', url);
+ }
+
+ close () =&gt; httpResponse.close();
+
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="Response">
+<button class="show-code">Code</button>
+new <strong>Response</strong>(<a href="http://api.dartlang.org/dart_io/HttpResponse.html">HttpResponse</a> httpResponse) <a class="anchor-link" href="#Response"
+              title="Permalink to Response.Response">#</a></h4>
+<div class="doc">
+<pre class="source">
+Response (this.httpResponse);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="httpResponse">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_io/HttpResponse.html">HttpResponse</a>         <strong>httpResponse</strong> <a class="anchor-link"
+            href="#httpResponse"
+            title="Permalink to Response.httpResponse">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+httpResponse
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="status">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/int.html">int</a>         <strong>status</strong> <a class="anchor-link"
+            href="#status"
+            title="Permalink to Response.status">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+int get status =&gt; httpResponse.statusCode;
+</pre>
+<pre class="source">
+set status (code) =&gt; httpResponse.statusCode = code;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="type">
+<button class="show-code">Code</button>
+<a href="../request/Response.html">Response</a>         <strong>type</strong> <a class="anchor-link"
+            href="#type"
+            title="Permalink to Response.type">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Response get type =&gt; get('Content-type');
+</pre>
+<pre class="source">
+set type (contentType) =&gt; set('Content-Type', contentType);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="cache">
+<button class="show-code">Code</button>
+<a href="../request/Response.html">Response</a> <strong>cache</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> cacheType, [<a href="http://api.dartlang.org/dart_core/Map.html">Map</a> options]) <a class="anchor-link" href="#cache"
+              title="Permalink to Response.cache">#</a></h4>
+<div class="doc">
+<pre class="source">
+Response cache(String cacheType, [Map options]) {
+ if(options == null) {
+   options = {};
+ }
+ StringBuffer value = new StringBuffer(cacheType);
+ options.forEach((key, val) {
+   value.write(', ${key}=${val}');
+ });
+ return set('Cache-Control', value.toString());
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="close">
+<button class="show-code">Code</button>
+<strong>close</strong>() <a class="anchor-link" href="#close"
+              title="Permalink to Response.close">#</a></h4>
+<div class="doc">
+<pre class="source">
+close () =&gt; httpResponse.close();
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="get">
+<button class="show-code">Code</button>
+<a href="../request/Response.html">Response</a> <strong>get</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name) <a class="anchor-link" href="#get"
+              title="Permalink to Response.get">#</a></h4>
+<div class="doc">
+<pre class="source">
+Response get (String name) =&gt; header(name);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="header">
+<button class="show-code">Code</button>
+<strong>header</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name, [value]) <a class="anchor-link" href="#header"
+              title="Permalink to Response.header">#</a></h4>
+<div class="doc">
+<pre class="source">
+header(String name, [value]) {
+ if (value == null) {
+   return httpResponse.headers[name];
+ }
+
+ httpResponse.headers.set(name, value);
+ return this;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="json">
+<button class="show-code">Code</button>
+<strong>json</strong>(<a href="http://api.dartlang.org/dart_core/Map.html">Map</a> data) <a class="anchor-link" href="#json"
+              title="Permalink to Response.json">#</a></h4>
+<div class="doc">
+<pre class="source">
+json (Map data) {
+ send(stringify(data));
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="redirect">
+<button class="show-code">Code</button>
+<strong>redirect</strong>(url, [<a href="http://api.dartlang.org/dart_core/int.html">int</a> code = 302]) <a class="anchor-link" href="#redirect"
+              title="Permalink to Response.redirect">#</a></h4>
+<div class="doc">
+<pre class="source">
+redirect (url, [int code = 302]) {
+ httpResponse.statusCode = code;
+ header('Location', url);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="send">
+<button class="show-code">Code</button>
+<strong>send</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> string) <a class="anchor-link" href="#send"
+              title="Permalink to Response.send">#</a></h4>
+<div class="doc">
+<pre class="source">
+send (String string) {
+ httpResponse.write(string);
+ httpResponse.close();
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="sendFile">
+<button class="show-code">Code</button>
+<strong>sendFile</strong>(path) <a class="anchor-link" href="#sendFile"
+              title="Permalink to Response.sendFile">#</a></h4>
+<div class="doc">
+<pre class="source">
+sendFile (path) {
+ var file = new File(path);
+ file.exists().then((found) {
+   if (found) {
+     httpResponse.consume(file.openRead());
+   } else {
+     httpResponse.statusCode = HttpStatus.NOT_FOUND;
+     httpResponse.close();
+   }
+ });
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="set">
+<button class="show-code">Code</button>
+<a href="../request/Response.html">Response</a> <strong>set</strong>(name, value) <a class="anchor-link" href="#set"
+              title="Permalink to Response.set">#</a></h4>
+<div class="doc">
+<pre class="source">
+Response set (name, value) =&gt; header(name, value);
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-08 17:34:11.994</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        
