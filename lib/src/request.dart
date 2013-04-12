@@ -7,6 +7,7 @@ import 'dart:uri';
 import 'utils.dart';
 
 // TODO Review all code
+// TODO Implement cookies
 class RoutingRequest {
   Request request;
   List<String> routeSteps;
@@ -104,7 +105,6 @@ class Response {
     return cookie(name, '', options);
   }*/
 
-  // To close or not to close?
   send (String string) {
     httpResponse.write(string);
     httpResponse.close();

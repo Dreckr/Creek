@@ -5,7 +5,15 @@ import 'dart:io';
 
 void main() {
   RouteServer server;
-  server = new RouteServer('127.0.0.1', 7070, 1);
+
+  HttpServer.bind('127.0.0.1', 7072, 0).then((httpServer) {
+    httpServer.listen((HttpRequest req) {
+      req.response.writeln('blablabla');
+      req.response.close();
+    });
+  });
+
+  server = new RouteServer('127.0.0.1', 7070, 0);
 
   group('RouteServer instantiation', () {
 
@@ -13,7 +21,7 @@ void main() {
 
     test('port is correct', () => expect(server.port, equals(7070)));
 
-    test('backlog is correct', () => expect(server.backlog, equals(1)));
+    test('backlog is correct', () => expect(server.backlog, equals(0)));
 
   });
 
@@ -38,12 +46,28 @@ void main() {
     ..post('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}!'); })
     ..put('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}!'); });
 
+  server
+    ..get('/filtered').where((req) {
+      if (req.params['name'] == 'Route') {
+        return true;
+      } else {
+        req.response.status = HttpStatus.FORBIDDEN;
+        req.response.close();
+        return false;
+      }
+    }).listen((req) => req.response.send('Passed filter!'));
+
+  server.notFound((req, res) {
+    res.status = HttpStatus.NOT_FOUND;
+    res.send('Howdy, stranger!');
+  });
+
   server.run().then((_) {
     group('Routing system', () {
       test('simple delete route', () {
         client.open('DELETE', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Deleting success!')));
           }));
         }));
@@ -52,7 +76,7 @@ void main() {
       test('simple get route', () {
         client.open('GET', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Getting success!')));
           }));
         }));
@@ -62,7 +86,7 @@ void main() {
       test('simple post route', () {
         client.open('POST', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Posting success!')));
           }));
         }));
@@ -71,7 +95,7 @@ void main() {
       test('simple put route', () {
         client.open('PUT', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Putting success!')));
           }));
         }));
@@ -80,7 +104,7 @@ void main() {
       test('generic delete route', () {
         client.open('DELETE', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic delete!')));
           }));
         }));
@@ -89,7 +113,7 @@ void main() {
       test('generic get route', () {
         client.open('GET', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic get!')));
           }));
         }));
@@ -98,7 +122,7 @@ void main() {
       test('generic post route', () {
         client.open('POST', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic post!')));
           }));
         }));
@@ -107,7 +131,7 @@ void main() {
       test('generic put route', () {
         client.open('PUT', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic put!')));
           }));
         }));
@@ -116,7 +140,7 @@ void main() {
       test('key delete route', () {
         client.open('DELETE', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
           }));
@@ -126,7 +150,7 @@ void main() {
       test('key get route', () {
         client.open('GET', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
           }));
@@ -136,7 +160,7 @@ void main() {
       test('key post route', () {
         client.open('POST', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
           }));
@@ -146,16 +170,67 @@ void main() {
       test('key put route', () {
         client.open('PUT', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
-            expect(res.statusCode, equals(200));
+            expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
           }));
         }));
       });
 
-      // TODO Filtering tests
+      test('refused filtered get route', () {
+        client.open('GET', 'localhost', 7070, '/filtered').then(expectAsync1((req) {
+          req.close().then(expectAsync1((res) {
+            expect(res.statusCode, equals(HttpStatus.FORBIDDEN));
+          }));
+        }));
+      });
 
-      // TODO Default route
+
+      // TODO Filtering tests
+      test('accepted filtered get route', () {
+        client.open('GET', 'localhost', 7070, '/filtered?name=Route').then(expectAsync1((req) {
+          req.close().then(expectAsync1((res) {
+            expect(res.statusCode, equals(HttpStatus.OK));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Passed filter!')));
+          }));
+        }));
+      });
+
+      test('not found delete route', () {
+        client.open('DELETE', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+          req.close().then(expectAsync1((res) {
+            expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));
+          }));
+        }));
+      });
+
+      test('not found get route', () {
+        client.open('GET', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+          req.close().then(expectAsync1((res) {
+            expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));
+          }));
+        }));
+      });
+
+      test('not found post route', () {
+        client.open('POST', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+          req.close().then(expectAsync1((res) {
+            expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));
+          }));
+        }));
+      });
+
+      test('not found put route', () {
+        client.open('PUT', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+          req.close().then(expectAsync1((res) {
+            expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));
+          }));
+        }));
+      });
 
     });
   });

@@ -1,12 +1,14 @@
 part of server;
 
+typedef void NotFoundHandler (Request request, Response response);
+
 class _RouteServerImpl implements RouteServer {
   HttpServer _httpServer;
   RouteNode _deleteTree = new RouteNode(RouteType.STRICT, null, '');
   RouteNode _getTree = new RouteNode(RouteType.STRICT, null, '');
   RouteNode _postTree = new RouteNode(RouteType.STRICT, null, '');
   RouteNode _putTree = new RouteNode(RouteType.STRICT, null, '');
-  Function _notFoundHandler;
+  NotFoundHandler _notFoundHandler;
   bool _running = false;
   bool get isRunning => this._running;
   String address;
@@ -27,7 +29,7 @@ class _RouteServerImpl implements RouteServer {
   RouteStream put (String path, [void handler (Request req, Response res)]) =>
       this._fetchRoute(this._putTree, path, handler);
 
-  notFound (void notFoundHandler (Request request, Response response)) {
+  notFound (NotFoundHandler notFoundHandler) {
     this._notFoundHandler = notFoundHandler;
   }
 
