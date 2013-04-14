@@ -36,7 +36,7 @@
         
 <button id="show-inherited" class="show-inherited">Hide inherited</button>
 <div class="doc">
-<p>A HTTP server wrapper that routes request.</p>
+<p>A <code>HttpServer</code> wrapper that routes request.</p>
 <p>This wrapper allows you to specify routes and handlers for this routes before the server is even created. All the
 routes are stored to be used later, when the server is running.</p>
 <p>It can be used as the following code:</p>
@@ -60,34 +60,34 @@ abstract class RouteServer {
      new _RouteServerImpl(address, port, backlog);
 
  /**
-  * Creates a new DELETE route and returns it's stream.
+  * Creates a new DELETE route and returns it's [RouteStream].
   *
-  * Creates a new DELETE route and returns it's stream. An optional handler may be passed. If this handler is passed,
+  * Creates a new DELETE route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
   * it will be used to listen to the stream and the subscription will be returned instead.
   */
  delete (String path, [void handler (Request req, Response res)]);
 
  /**
-  * Creates a new GET route and returns it's stream.
+  * Creates a new GET route and returns it's [RouteStream].
   *
-  * Creates a new GET route and returns it's stream. An optional handler may be passed. If this handler is passed,
-  * it will be used to listen to the stream and the subscription will be returned instead.
+  * Creates a new GET route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+  * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
   */
  get (String path, [void handler (Request req, Response res)]);
 
  /**
-  * Creates a new POST route and returns it's stream.
+  * Creates a new POST route and returns it's [RouteStream].
   *
-  * Creates a new POST route and returns it's stream. An optional handler may be passed. If this handler is passed,
-  * it will be used to listen to the stream and the subscription will be returned instead.
+  * Creates a new POST route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+  * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
   */
  post (String path, [void handler (Request req, Response res)]);
 
  /**
-  * Creates a new PUT route and returns it's stream.
+  * Creates a new PUT route and returns it's [RouteStream].
   *
-  * Creates a new PUT route and returns it's stream. An optional handler may be passed. If this handler is passed,
-  * it will be used to listen to the stream and the subscription will be returned instead.
+  * Creates a new PUT route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+  * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
   */
  put (String path, [void handler (Request req, Response res)]);
 
@@ -97,12 +97,12 @@ abstract class RouteServer {
  void route (HttpRequest httpRequest);
 
  /**
-  * Creates a HTTP server by listening to the specified address and port.
+  * Creates a [HttpServer] by listening to the specified address and port.
   */
  Future&lt;RouteServer&gt; run ();
 
  /**
-  * Closes the HTTP server and closes all routes.
+  * Closes the [HttpServer] and closes all routes.
   */
  close ();
 
@@ -204,15 +204,15 @@ int port
 abstract dynamic<strong>close</strong>() <a class="anchor-link" href="#close"
               title="Permalink to RouteServer.close">#</a></h4>
 <div class="doc">
-<p>Closes the HTTP server and closes all routes.</p>
+<p>Closes the <code>HttpServer</code> and closes all routes.</p>
 </div>
 </div>
 <div class="method"><h4 id="delete">
 abstract dynamic<strong>delete</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#delete"
               title="Permalink to RouteServer.delete">#</a></h4>
 <div class="doc">
-<p>Creates a new DELETE route and returns it's stream.</p>
-<p>Creates a new DELETE route and returns it's stream. An optional handler may be passed. If this handler is passed,
+<p>Creates a new DELETE route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new DELETE route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
 it will be used to listen to the stream and the subscription will be returned instead.</p>
 </div>
 </div>
@@ -220,27 +220,27 @@ it will be used to listen to the stream and the subscription will be returned in
 abstract dynamic<strong>get</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#get"
               title="Permalink to RouteServer.get">#</a></h4>
 <div class="doc">
-<p>Creates a new GET route and returns it's stream.</p>
-<p>Creates a new GET route and returns it's stream. An optional handler may be passed. If this handler is passed,
-it will be used to listen to the stream and the subscription will be returned instead.</p>
+<p>Creates a new GET route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new GET route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
+it will be used to listen to the stream and a <code>RouteStreamSubscription</code> will be returned instead.</p>
 </div>
 </div>
 <div class="method"><h4 id="post">
 abstract dynamic<strong>post</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#post"
               title="Permalink to RouteServer.post">#</a></h4>
 <div class="doc">
-<p>Creates a new POST route and returns it's stream.</p>
-<p>Creates a new POST route and returns it's stream. An optional handler may be passed. If this handler is passed,
-it will be used to listen to the stream and the subscription will be returned instead.</p>
+<p>Creates a new POST route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new POST route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
+it will be used to listen to the stream and a <code>RouteStreamSubscription</code> will be returned instead.</p>
 </div>
 </div>
 <div class="method"><h4 id="put">
 abstract dynamic<strong>put</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#put"
               title="Permalink to RouteServer.put">#</a></h4>
 <div class="doc">
-<p>Creates a new PUT route and returns it's stream.</p>
-<p>Creates a new PUT route and returns it's stream. An optional handler may be passed. If this handler is passed,
-it will be used to listen to the stream and the subscription will be returned instead.</p>
+<p>Creates a new PUT route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new PUT route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
+it will be used to listen to the stream and a <code>RouteStreamSubscription</code> will be returned instead.</p>
 </div>
 </div>
 <div class="method"><h4 id="route">
@@ -254,7 +254,7 @@ abstract void <strong>route</strong>(<a href="http://api.dartlang.org/dart_io/Ht
 abstract <a href="http://api.dartlang.org/dart_async/Future.html">Future</a>&lt;<a href="../server/RouteServer.html">RouteServer</a>&gt; <strong>run</strong>() <a class="anchor-link" href="#run"
               title="Permalink to RouteServer.run">#</a></h4>
 <div class="doc">
-<p>Creates a HTTP server by listening to the specified address and port.</p>
+<p>Creates a <code>HttpServer</code> by listening to the specified address and port.</p>
 </div>
 </div>
 </div>
@@ -262,7 +262,7 @@ abstract <a href="http://api.dartlang.org/dart_async/Future.html">Future</a>&lt;
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-04-13 21:01:32.541</div>
+          <div>This page was generated at 2013-04-13 22:00:28.968</div>
         </div>
         <script async src="../client-static.js"></script>
         </body></html>

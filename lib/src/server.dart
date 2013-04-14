@@ -11,7 +11,7 @@ part 'server_impl.dart';
 typedef void NotFoundHandler (Request request, Response response);
 
 /**
- * A HTTP server wrapper that routes request.
+ * A [HttpServer] wrapper that routes request.
  *
  * This wrapper allows you to specify routes and handlers for this routes before the server is even created. All the
  * routes are stored to be used later, when the server is running.
@@ -38,34 +38,34 @@ abstract class RouteServer {
       new _RouteServerImpl(address, port, backlog);
 
   /**
-   * Creates a new DELETE route and returns it's stream.
+   * Creates a new DELETE route and returns it's [RouteStream].
    *
-   * Creates a new DELETE route and returns it's stream. An optional handler may be passed. If this handler is passed,
+   * Creates a new DELETE route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and the subscription will be returned instead.
    */
   delete (String path, [void handler (Request req, Response res)]);
 
   /**
-   * Creates a new GET route and returns it's stream.
+   * Creates a new GET route and returns it's [RouteStream].
    *
-   * Creates a new GET route and returns it's stream. An optional handler may be passed. If this handler is passed,
-   * it will be used to listen to the stream and the subscription will be returned instead.
+   * Creates a new GET route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+   * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
    */
   get (String path, [void handler (Request req, Response res)]);
 
   /**
-   * Creates a new POST route and returns it's stream.
+   * Creates a new POST route and returns it's [RouteStream].
    *
-   * Creates a new POST route and returns it's stream. An optional handler may be passed. If this handler is passed,
-   * it will be used to listen to the stream and the subscription will be returned instead.
+   * Creates a new POST route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+   * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
    */
   post (String path, [void handler (Request req, Response res)]);
 
   /**
-   * Creates a new PUT route and returns it's stream.
+   * Creates a new PUT route and returns it's [RouteStream].
    *
-   * Creates a new PUT route and returns it's stream. An optional handler may be passed. If this handler is passed,
-   * it will be used to listen to the stream and the subscription will be returned instead.
+   * Creates a new PUT route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+   * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
    */
   put (String path, [void handler (Request req, Response res)]);
 
@@ -75,12 +75,12 @@ abstract class RouteServer {
   void route (HttpRequest httpRequest);
 
   /**
-   * Creates a HTTP server by listening to the specified address and port.
+   * Creates a [HttpServer] by listening to the specified address and port.
    */
   Future<RouteServer> run ();
 
   /**
-   * Closes the HTTP server and closes all routes.
+   * Closes the [HttpServer] and closes all routes.
    */
   close ();
 
