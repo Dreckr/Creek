@@ -1,9 +1,12 @@
 import '../lib/route.dart';
-import 'package:unittest/unittest.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:unittest/unittest.dart';
+import 'package:unittest/vm_config.dart';
 
 void main() {
+  useVMConfiguration();
+
   RouteServer server;
 
   server = new RouteServer('127.0.0.1', 7070, 0);
