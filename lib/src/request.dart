@@ -1,5 +1,6 @@
 library request;
 
+import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'dart:json';
@@ -87,23 +88,7 @@ class Response {
     return set('Cache-Control', value.toString());
   }
 
-/*
-  Response cookie(name, val, [Map options]) {
-    if (options == null) {
-      options = {};
-    }
-    options['name'] = name;
-    options['value'] = val;
-    var cookieHeader = Cookie.stringify(options);
-    return header('Set-Cookie', cookieHeader);
-  }
-  */
-
-  /*
-  Response deleteCookie(name) {
-    Map options = { 'expires': 'Thu, 01-Jan-70 00:00:01 GMT', 'path': '/' };
-    return cookie(name, '', options);
-  }*/
+  // TODO Cookie sugary. Issue #3
 
   send (String string) {
     httpResponse.write(string);
@@ -135,6 +120,7 @@ class Response {
 
 }
 
+// TODO Implement middlewares. Issue #4
 class Middleware {
 
 }

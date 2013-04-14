@@ -6,17 +6,18 @@ A HttpRequest routing system with Sinatra style and based on Streams.
 Usage
 -----
 
-// TODO
+// TODO Issue #6
 
 Routes
 ------
 
-// TODO
+// TODO Issue #6
 // Mention route tree
 
 RouteStreams and RouteStreamSubscriptions
 ------------------------------------------
 
+// TODO Issue #6
 // Present stream features and why they might be interesting
 
 License

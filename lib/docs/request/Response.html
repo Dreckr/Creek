@@ -73,23 +73,7 @@ class Response {
    return set('Cache-Control', value.toString());
  }
 
-/*
- Response cookie(name, val, [Map options]) {
-   if (options == null) {
-     options = {};
-   }
-   options['name'] = name;
-   options['value'] = val;
-   var cookieHeader = Cookie.stringify(options);
-   return header('Set-Cookie', cookieHeader);
- }
- */
-
- /*
- Response deleteCookie(name) {
-   Map options = { 'expires': 'Thu, 01-Jan-70 00:00:01 GMT', 'path': '/' };
-   return cookie(name, '', options);
- }*/
+ // TODO Cookie sugary. Issue #3
 
  send (String string) {
    httpResponse.write(string);
@@ -145,7 +129,7 @@ Response (this.httpResponse);
         </h4>
         <div class="doc">
 <pre class="source">
-httpResponse
+HttpResponse httpResponse
 </pre>
 </div>
 </div>
@@ -203,7 +187,7 @@ Response cache(String cacheType, [Map options]) {
 </div>
 <div class="method"><h4 id="close">
 <button class="show-code">Code</button>
-<strong>close</strong>() <a class="anchor-link" href="#close"
+dynamic<strong>close</strong>() <a class="anchor-link" href="#close"
               title="Permalink to Response.close">#</a></h4>
 <div class="doc">
 <pre class="source">
@@ -223,7 +207,7 @@ Response get (String name) =&gt; header(name);
 </div>
 <div class="method"><h4 id="header">
 <button class="show-code">Code</button>
-<strong>header</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name, [value]) <a class="anchor-link" href="#header"
+dynamic<strong>header</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name, [value]) <a class="anchor-link" href="#header"
               title="Permalink to Response.header">#</a></h4>
 <div class="doc">
 <pre class="source">
@@ -240,7 +224,7 @@ header(String name, [value]) {
 </div>
 <div class="method"><h4 id="json">
 <button class="show-code">Code</button>
-<strong>json</strong>(<a href="http://api.dartlang.org/dart_core/Map.html">Map</a> data) <a class="anchor-link" href="#json"
+dynamic<strong>json</strong>(<a href="http://api.dartlang.org/dart_core/Map.html">Map</a> data) <a class="anchor-link" href="#json"
               title="Permalink to Response.json">#</a></h4>
 <div class="doc">
 <pre class="source">
@@ -252,7 +236,7 @@ json (Map data) {
 </div>
 <div class="method"><h4 id="redirect">
 <button class="show-code">Code</button>
-<strong>redirect</strong>(url, [<a href="http://api.dartlang.org/dart_core/int.html">int</a> code = 302]) <a class="anchor-link" href="#redirect"
+dynamic<strong>redirect</strong>(url, [<a href="http://api.dartlang.org/dart_core/int.html">int</a> code = 302]) <a class="anchor-link" href="#redirect"
               title="Permalink to Response.redirect">#</a></h4>
 <div class="doc">
 <pre class="source">
@@ -265,7 +249,7 @@ redirect (url, [int code = 302]) {
 </div>
 <div class="method"><h4 id="send">
 <button class="show-code">Code</button>
-<strong>send</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> string) <a class="anchor-link" href="#send"
+dynamic<strong>send</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> string) <a class="anchor-link" href="#send"
               title="Permalink to Response.send">#</a></h4>
 <div class="doc">
 <pre class="source">
@@ -278,7 +262,7 @@ send (String string) {
 </div>
 <div class="method"><h4 id="sendFile">
 <button class="show-code">Code</button>
-<strong>sendFile</strong>(path) <a class="anchor-link" href="#sendFile"
+dynamic<strong>sendFile</strong>(path) <a class="anchor-link" href="#sendFile"
               title="Permalink to Response.sendFile">#</a></h4>
 <div class="doc">
 <pre class="source">
@@ -311,7 +295,7 @@ Response set (name, value) =&gt; header(name, value);
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-04-11 20:37:39.709</div>
+          <div>This page was generated at 2013-04-13 21:01:32.354</div>
         </div>
         <script async src="../client-static.js"></script>
         </body></html>

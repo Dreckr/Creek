@@ -6,13 +6,6 @@ import 'dart:io';
 void main() {
   RouteServer server;
 
-  HttpServer.bind('127.0.0.1', 7072, 0).then((httpServer) {
-    httpServer.listen((HttpRequest req) {
-      req.response.writeln('blablabla');
-      req.response.close();
-    });
-  });
-
   server = new RouteServer('127.0.0.1', 7070, 0);
 
   group('RouteServer instantiation', () {
@@ -29,22 +22,22 @@ void main() {
   client = new HttpClient();
 
   server
-    ..delete('/foo', (req, res) => res.send('Deleting success!'))
-    ..get('/foo', (req, res) => res.send('Getting success!'))
-    ..post('/foo', (req, res) => res.send('Posting success!'))
-    ..put('/foo', (req, res) => res.send('Putting success!'));
+    ..delete('/foo', (req, res) => res.send('Deleting success'))
+    ..get('/foo', (req, res) => res.send('Getting success'))
+    ..post('/foo', (req, res) => res.send('Posting success'))
+    ..put('/foo', (req, res) => res.send('Putting success'));
 
   server
-    ..delete('/*', (req, res) => res.send('Generic delete!'))
-    ..get('/*', (req, res) => res.send('Generic get!'))
-    ..post('/*', (req, res) => res.send('Generic post!'))
-    ..put('/*', (req, res) => res.send('Generic put!'));
+    ..delete('/*', (req, res) => res.send('Generic delete'))
+    ..get('/*', (req, res) => res.send('Generic get'))
+    ..post('/*', (req, res) => res.send('Generic post'))
+    ..put('/*', (req, res) => res.send('Generic put'));
 
   server
-    ..delete('/bar/:key', (req, res) { res.header('key', req.header('key'));  res.send('Key: ${req.header('key')}!'); })
-    ..get('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}!'); })
-    ..post('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}!'); })
-    ..put('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}!'); });
+    ..delete('/bar/:key', (req, res) { res.header('key', req.header('key'));  res.send('Key: ${req.header('key')}'); })
+    ..get('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}'); })
+    ..post('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}'); })
+    ..put('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}'); });
 
   server
     ..get('/filtered').where((req) {
@@ -55,20 +48,19 @@ void main() {
         req.response.close();
         return false;
       }
-    }).listen((req) => req.response.send('Passed filter!'));
+    }).listen((req) => req.response.send('Passed filter'));
 
-  server.notFound((req, res) {
+  server.notFoundHandler = (req, res) {
     res.status = HttpStatus.NOT_FOUND;
     res.send('Howdy, stranger!');
-  });
-
+  };
   server.run().then((_) {
     group('Routing system', () {
       test('simple delete route', () {
         client.open('DELETE', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Deleting success!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Deleting success')));
           }));
         }));
       });
@@ -77,7 +69,7 @@ void main() {
         client.open('GET', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Getting success!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Getting success')));
           }));
         }));
       });
@@ -87,7 +79,7 @@ void main() {
         client.open('POST', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Posting success!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Posting success')));
           }));
         }));
       });
@@ -96,7 +88,7 @@ void main() {
         client.open('PUT', 'localhost', 7070, '/foo').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Putting success!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Putting success')));
           }));
         }));
       });
@@ -105,7 +97,7 @@ void main() {
         client.open('DELETE', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic delete!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic delete')));
           }));
         }));
       });
@@ -114,7 +106,7 @@ void main() {
         client.open('GET', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic get!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic get')));
           }));
         }));
       });
@@ -123,7 +115,7 @@ void main() {
         client.open('POST', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic post!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic post')));
           }));
         }));
       });
@@ -132,7 +124,7 @@ void main() {
         client.open('PUT', 'localhost', 7070, '/bar').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic put!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic put')));
           }));
         }));
       });
@@ -142,7 +134,7 @@ void main() {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
           }));
         }));
       });
@@ -152,7 +144,7 @@ void main() {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
           }));
         }));
       });
@@ -162,7 +154,7 @@ void main() {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
           }));
         }));
       });
@@ -172,7 +164,7 @@ void main() {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
             expect(res.headers['key'].contains('test'), isTrue);
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
           }));
         }));
       });
@@ -191,7 +183,7 @@ void main() {
         client.open('GET', 'localhost', 7070, '/filtered?name=Route').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
-            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Passed filter!')));
+            res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Passed filter')));
           }));
         }));
       });

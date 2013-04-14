@@ -1,16 +1,16 @@
 part of route;
 
 class _RouteNode implements RouteNode {
-  RouteType type;
+  RouteNodeType type;
   List<RouteNode> children = [];
-  List<Middleware> middlewares = [];
+  //List<Middleware> middlewares = [];
   List<String> keysNames = [];
-  RouteNode fatherNode;
   RouteStreamController controller;
   String stepName;
-  bool get isClosed => controller == null || !controller.hasSubscribers;
+  bool get isClosed => controller == null || controller.isClosed;
+  bool get isPaused => this.isClosed || controller.isPaused || !controller.hasSubscribers;
 
-  _RouteNode (this.type, this.fatherNode, this.stepName);
+  _RouteNode (this.type, this.stepName);
 
   RouteNode findNode (List<String> routeSteps) {
     return this._findNode(routeSteps, new List.from(this.keysNames));
@@ -23,33 +23,34 @@ class _RouteNode implements RouteNode {
     }
 
     String step = routeSteps.removeAt(0);
-    RouteType routeType;
+    RouteNodeType routeType;
 
     if (step.startsWith('*')) {
-      routeType = RouteType.GENERIC;
+      routeType = RouteNodeType.GENERIC;
     } else if (step.startsWith(':')) {
-      routeType = RouteType.KEY;
+      routeType = RouteNodeType.KEY;
       step = step.substring(1);
       keysNames.add(step);
     } else {
-      routeType = RouteType.STRICT;
+      routeType = RouteNodeType.STRICT;
     }
 
     for (var child in this.children)
-      if ((routeType == RouteType.STRICT && child.stepName == step) ||
-          (child.type == routeType && routeType != RouteType.STRICT))
+      if ((routeType == RouteNodeType.STRICT && child.stepName == step) ||
+          (child.type == routeType && routeType != RouteNodeType.STRICT))
         return child._findNode(routeSteps, keysNames);
 
-    var childNode = new RouteNode(routeType, this, step);
+    var childNode = new RouteNode(routeType, step);
     this.children.add(childNode);
     return childNode._findNode(routeSteps, keysNames);
   }
 
   bool routeRequest (RoutingRequest routingRequest) {
     if (routingRequest.routeSteps.length == 0) {
-      if (!this.isClosed) {
+      if (!this.isClosed && !this.isPaused) {
         this._parseKeys(routingRequest);
-        return this.controller.add(routingRequest.request);
+        this.controller.add(routingRequest.request);
+        return true;
       } else {
         return false;
       }
@@ -60,10 +61,10 @@ class _RouteNode implements RouteNode {
     for (var child in this.children) {
       if (child.stepName == step) {
         strictChild = child;
-      } else if (child.type == RouteType.KEY) {
+      } else if (child.type == RouteNodeType.KEY) {
         routingRequest.keys.add(step);
         genericChild = child;
-      } else if (child.type == RouteType.GENERIC && strictChild == null) {
+      } else if (child.type == RouteNodeType.GENERIC && strictChild == null) {
         genericChild = child;
       }
     }
@@ -78,21 +79,21 @@ class _RouteNode implements RouteNode {
     return false;
   }
 
-  openStream () {
+  void openStream () {
     if (this.isClosed)
       this.controller = new RouteStreamController();
   }
 
-  close (bool closeChildren)  {
+  void closeStream (bool closeTree)  {
     if (this.controller != null)
       this.controller.close();
 
-    if (closeChildren)
+    if (closeTree)
       for (RouteNode child in children)
-        child.close(true);
+        child.closeStream(true);
   }
 
-  _parseKeys (RoutingRequest routingRequest) {
+  void _parseKeys (RoutingRequest routingRequest) {
     var i = 0;
 
     for (String key in routingRequest.keys) {
@@ -117,11 +118,11 @@ class _RouteStreamControllerImpl implements RouteStreamController {
   }
 
 
-  bool add (Request request) {
-    return this.sink.add(request);
+  void add (Request request) {
+    this.sink.add(request);
   }
 
-  addError (error, [stackTrace]) {
+  void addError (error, [stackTrace]) {
     AsyncError asyncError;
     if (error is AsyncError) {
       asyncError = error;
@@ -132,12 +133,12 @@ class _RouteStreamControllerImpl implements RouteStreamController {
     this.sink.addError(asyncError);
   }
 
-  close () {
+  void close () {
     if (!this.isClosed)
       this.sink.close();
   }
 
-  signalError (AsyncError error) {
+  void signalError (AsyncError error) {
     this.sink.addError(error);
   }
 
@@ -148,15 +149,15 @@ class _RouteStreamSinkImpl implements RouteStreamSink {
 
   _RouteStreamSinkImpl (RouteStream stream) : this._stream = stream;
 
-  bool add (Request request) {
-    return this._stream._add(request);
+  void add (Request request) {
+    this._stream._add(request);
   }
 
-  addError (AsyncError error) {
+  void addError (AsyncError error) {
     this._stream._addError(error);
   }
 
-  close () {
+  void close () {
     this._stream._close();
   }
 
@@ -197,21 +198,19 @@ class _RouteStreamImpl extends Stream<Request> implements RouteStream {
     return subscription;
   }
 
-  bool _add (Request request) {
+  void _add (Request request) {
     if (this.subscription != null && !this.isPaused) {
-      return this.subscription.handleData(request);
+      this.subscription._handleData(request);
     }
-
-    return false;
   }
 
-  _addError (AsyncError error) {
-    this.subscription.handleError(error);
+  void _addError (AsyncError error) {
+    this.subscription._handleError(error);
   }
 
-  _close () {
+  void _close () {
     this._closed = true;
-    subscription.handleDone();
+    subscription._handleDone();
   }
 }
 
@@ -240,21 +239,21 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
     this.unsubscribeOnError = unsubscribeOnError;
   }
 
-  cancel () {
+  void cancel () {
     this.stream._close();
   }
 
-  onData (void handleData(Request request)) {
+  void onData (void handleData(Request request)) {
     this.dataHandler = (Request request) {
       this._tryHandleData(handleData, request);
     };
   }
 
-  onError (void handleError(AsyncError error)) {
+  void onError (void handleError(AsyncError error)) {
     this.errorHandler = handleError;
   }
 
-  onDone (void handleDone()) {
+  void onDone (void handleDone()) {
     this.doneHandler = handleDone;
   }
 
@@ -269,29 +268,25 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
       });
   }
 
-  resume () {
+  void resume () {
     this._paused--;
   }
 
-  bool handleData (Request request) {
-    if (this.dataHandler == null)
-      return false;
-
+  void _handleData (Request request) {
     this.dataHandler(request);
-    return true;
   }
 
-  handleError (AsyncError error) {
+  void _handleError (AsyncError error) {
     if (this.errorHandler != null)
       this.errorHandler(error);
   }
 
-  handleDone () {
+  void _handleDone () {
     if (this.doneHandler != null)
       this.doneHandler();
   }
 
-  _tryHandleData (void handleData(Request request), Request request) {
+  void _tryHandleData (void handleData(Request request), Request request) {
     try {
       handleData(request);
     } catch (e) {

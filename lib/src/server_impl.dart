@@ -1,14 +1,12 @@
 part of server;
 
-typedef void NotFoundHandler (Request request, Response response);
-
 class _RouteServerImpl implements RouteServer {
-  HttpServer _httpServer;
-  RouteNode _deleteTree = new RouteNode(RouteType.STRICT, null, '');
-  RouteNode _getTree = new RouteNode(RouteType.STRICT, null, '');
-  RouteNode _postTree = new RouteNode(RouteType.STRICT, null, '');
-  RouteNode _putTree = new RouteNode(RouteType.STRICT, null, '');
-  NotFoundHandler _notFoundHandler;
+  HttpServer httpServer;
+  RouteNode _deleteTree = new RouteNode(RouteNodeType.STRICT, '');
+  RouteNode _getTree = new RouteNode(RouteNodeType.STRICT, '');
+  RouteNode _postTree = new RouteNode(RouteNodeType.STRICT, '');
+  RouteNode _putTree = new RouteNode(RouteNodeType.STRICT, '');
+  NotFoundHandler notFoundHandler;
   bool _running = false;
   bool get isRunning => this._running;
   String address;
@@ -17,35 +15,32 @@ class _RouteServerImpl implements RouteServer {
 
   _RouteServerImpl (this.address, this.port, this.backlog);
 
-  RouteStream delete (String path, [void handler (Request req, Response res)]) =>
+  delete (String path, [void handler (Request req, Response res)]) =>
       this._fetchRoute(this._deleteTree, path, handler);
 
-  RouteStream get (String path, [void handler (Request req, Response res)]) =>
+  get (String path, [void handler (Request req, Response res)]) =>
       this._fetchRoute(this._getTree, path, handler);
 
-  RouteStream post (String path, [void handler (Request req, Response res)]) =>
+  post (String path, [void handler (Request req, Response res)]) =>
       this._fetchRoute(this._postTree, path, handler);
 
-  RouteStream put (String path, [void handler (Request req, Response res)]) =>
+  put (String path, [void handler (Request req, Response res)]) =>
       this._fetchRoute(this._putTree, path, handler);
 
-  notFound (NotFoundHandler notFoundHandler) {
-    this._notFoundHandler = notFoundHandler;
-  }
-
-  Stream<Request> _fetchRoute (RouteNode routeTree, String path, [void handler (Request req, Response res)]) {
+  _fetchRoute (RouteNode routeTree, String path, [void handler (Request req, Response res)]) {
     List<String> routeSteps = createRouteSteps(path);
     RouteNode node = routeTree.findNode(routeSteps);
     if (node.isClosed)
       node.openStream();
 
-    if (handler != null)
-      node.controller.stream.listen((request) => handler(request, request.response));
+    if (handler != null) {
+      return node.controller.stream.treat(handler);
+    }
 
     return node.controller.stream;
   }
 
-  route (HttpRequest httpRequest) {
+  void route (HttpRequest httpRequest) {
     RoutingRequest routingRequest = new RoutingRequest(httpRequest);
     RouteNode tree;
 
@@ -70,12 +65,12 @@ class _RouteServerImpl implements RouteServer {
     }
 
     if (!tree.routeRequest(routingRequest)) {
-      if (this._notFoundHandler == null) {
+      if (this.notFoundHandler == null) {
         Response res = routingRequest.request.response;
         res.status = HttpStatus.NOT_FOUND;
         res.close();
       } else {
-        this._notFoundHandler(routingRequest.request, routingRequest.request.response);
+        this.notFoundHandler(routingRequest.request, routingRequest.request.response);
       }
     }
   }
@@ -85,8 +80,8 @@ class _RouteServerImpl implements RouteServer {
     HttpServer.bind(this.address, this.port, this.backlog).then(
         (server) {
           this._running = true;
-          this._httpServer = server;
-          this._httpServer.listen((HttpRequest request) => this.route(request));
+          this.httpServer = server;
+          this.httpServer.listen((HttpRequest request) => this.route(request));
           completer.complete(this);
         },
         onError:
@@ -98,12 +93,12 @@ class _RouteServerImpl implements RouteServer {
 
   close () {
     if (this.isRunning)
-      this._httpServer.close();
+      this.httpServer.close();
 
-    this._deleteTree.close(true);
-    this._getTree.close(true);
-    this._postTree.close(true);
-    this._putTree.close(true);
+    this._deleteTree.closeStream(true);
+    this._getTree.closeStream(true);
+    this._postTree.closeStream(true);
+    this._putTree.closeStream(true);
     this._running = false;
   }
 
