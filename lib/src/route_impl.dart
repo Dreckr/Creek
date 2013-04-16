@@ -8,7 +8,7 @@ class _RouteNode implements RouteNode {
   RouteStreamController controller;
   String stepName;
   bool get isClosed => controller == null || controller.isClosed;
-  bool get isPaused => this.isClosed || controller.isPaused || !controller.hasSubscribers;
+  bool get isPaused => this.isClosed || controller.isPaused || !controller.hasListener;
 
   _RouteNode (this.type, this.stepName);
 
@@ -109,7 +109,7 @@ class _RouteStreamControllerImpl implements RouteStreamController {
   RouteStreamSink sink;
   bool get isClosed => sink._stream.isClosed;
   bool get isPaused => sink._stream.isPaused;
-  bool get hasSubscribers => sink._stream.hasSubscribers;
+  bool get hasListener => sink._stream.hasListener;
 
   _RouteStreamControllerImpl(onPauseStateChange, onSubscriptionStateChange) {
     this.sink = new _RouteStreamSinkImpl(new _RouteStreamImpl());
@@ -123,14 +123,7 @@ class _RouteStreamControllerImpl implements RouteStreamController {
   }
 
   void addError (error, [stackTrace]) {
-    AsyncError asyncError;
-    if (error is AsyncError) {
-      asyncError = error;
-    } else {
-      asyncError = new AsyncError(error, stackTrace);
-    }
-
-    this.sink.addError(asyncError);
+    this.sink.addError(error);
   }
 
   void close () {
@@ -138,7 +131,7 @@ class _RouteStreamControllerImpl implements RouteStreamController {
       this.sink.close();
   }
 
-  void signalError (AsyncError error) {
+  void signalError (error) {
     this.sink.addError(error);
   }
 
@@ -153,7 +146,7 @@ class _RouteStreamSinkImpl implements RouteStreamSink {
     this._stream._add(request);
   }
 
-  void addError (AsyncError error) {
+  void addError (error) {
     this._stream._addError(error);
   }
 
@@ -167,7 +160,7 @@ class _RouteStreamImpl extends Stream<Request> implements RouteStream {
   bool _closed = false;
   bool get isClosed => this._closed;
   bool get isPaused => this.subscription == null || this.subscription.isPaused;
-  bool get hasSubscribers => this.subscription != null;
+  bool get hasListener => this.subscription != null;
 
   RouteStreamSubscription subscription;
 
@@ -176,22 +169,22 @@ class _RouteStreamImpl extends Stream<Request> implements RouteStream {
   SubscriptionStateChangeHandler _subscriptionHandler;
 
   RouteStreamSubscription treat (void onData(Request request, Response response),
-                                  { void onError(AsyncError error),
+                                  { void onError(error),
                                     void onDone(),
-                                    bool unsubscribeOnError}) =>
+                                    bool cancelOnError}) =>
                                         listen((Request req) => onData(req, req.response),
-                                          onError: onError, onDone: onDone, unsubscribeOnError: unsubscribeOnError);
+                                          onError: onError, onDone: onDone, cancelOnError: cancelOnError);
 
   RouteStreamSubscription listen (void onData(Request request),
-                                  { void onError(AsyncError error),
+                                  { void onError(error),
                                     void onDone(),
-                                    bool unsubscribeOnError}) {
+                                    bool cancelOnError}) {
 
     if (this._closed)
       throw new Exception('RouteStream is closed');
 
     RouteStreamSubscription subscription = new RouteStreamSubscription(this, onData,
-        onError : onError, onDone : onDone, unsubscribeOnError : unsubscribeOnError);
+        onError : onError, onDone : onDone, cancelOnError : cancelOnError);
 
     this.subscription = subscription;
 
@@ -204,7 +197,7 @@ class _RouteStreamImpl extends Stream<Request> implements RouteStream {
     }
   }
 
-  void _addError (AsyncError error) {
+  void _addError (error) {
     this.subscription._handleError(error);
   }
 
@@ -219,12 +212,12 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
   Function dataHandler;
   Function doneHandler;
   Function errorHandler;
-  bool unsubscribeOnError = true;
+  bool cancelOnError = true;
   int _paused = 0;
   bool get isPaused => this._paused > 0;
 
   _RouteStreamSubscription (this.stream, dataHandler,
-                                errorHandler, doneHandler, unsubscribeOnError) {
+                                errorHandler, doneHandler, cancelOnError) {
 
     if (dataHandler == null)
       throw new Exception ('Subscription\'s onData handler is not defined');
@@ -233,10 +226,10 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
     this.onError(errorHandler);
     this.onDone(doneHandler);
 
-    if (unsubscribeOnError == null)
-      unsubscribeOnError = true;
+    if (cancelOnError == null)
+      cancelOnError = true;
 
-    this.unsubscribeOnError = unsubscribeOnError;
+    this.cancelOnError = cancelOnError;
   }
 
   void cancel () {
@@ -249,7 +242,7 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
     };
   }
 
-  void onError (void handleError(AsyncError error)) {
+  void onError (void handleError(error)) {
     this.errorHandler = handleError;
   }
 
@@ -276,7 +269,7 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
     this.dataHandler(request);
   }
 
-  void _handleError (AsyncError error) {
+  void _handleError (error) {
     if (this.errorHandler != null)
       this.errorHandler(error);
   }
@@ -298,9 +291,17 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
         res.close();
       }
 
-      if (this.unsubscribeOnError == true)
+      if (this.cancelOnError == true)
         this.cancel();
     }
+  }
+
+  Future asFuture ([futureValue]) {
+    Completer completer = new Completer();
+    this.onDone(() => completer.complete(futureValue));
+    this.onError((error) => completer.completeError(error));
+
+    return completer.future;
   }
 
 }

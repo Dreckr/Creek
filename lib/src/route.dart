@@ -132,7 +132,7 @@ abstract class RouteStreamSink implements EventSink<Request> {
 abstract class RouteStream implements Stream<Request> {
   bool get isClosed;
   bool get isPaused;
-  bool get hasSubscribers;
+  bool get hasListener;
   RouteStreamSubscription subscription;
   PauseStateChangeHandler _pauseHandler;
   SubscriptionStateChangeHandler _subscriptionHandler;
@@ -145,13 +145,13 @@ abstract class RouteStream implements Stream<Request> {
    * Creates a subscription by listening to the stream. The onData handler is converted to a single parameter handler.
    */
   RouteStreamSubscription treat (void onData(Request request, Response response),
-                                 { void onError(AsyncError error),
+                                 { void onError(error),
                                     void onDone(),
-                                    bool unsubscribeOnError});
+                                    bool cancelOnError});
 
   void _add (Request request);
 
-  void _addError (AsyncError error);
+  void _addError (error);
 
   void _close ();
 
@@ -165,21 +165,21 @@ abstract class RouteStream implements Stream<Request> {
 abstract class RouteStreamSubscription extends StreamSubscription<Request> {
   RouteStream stream;
   bool get isPaused;
-  bool unsubscribeOnError;
+  bool cancelOnError;
   Function dataHandler;
   Function doneHandler;
   Function errorHandler;
 
   factory RouteStreamSubscription (RouteStream stream,
                                           void onData(Request data),
-                                      {   void onError(AsyncError error),
+                                      {   void onError(error),
                                           void onDone(),
-                                          bool unsubscribeOnError : true}) =>
-    new _RouteStreamSubscription(stream, onData, onError, onDone, unsubscribeOnError);
+                                          bool cancelOnError : true}) =>
+    new _RouteStreamSubscription(stream, onData, onError, onDone, cancelOnError);
 
   void _handleData (Request request);
 
-  void _handleError (AsyncError error);
+  void _handleError (error);
 
   void _handleDone ();
 }

@@ -1,8 +1,9 @@
 name: Route
 version: 0.0.1
 author: Diego Rocha
-description: A HttpRequest routing system with Sinatra style and using Streams.
+description: A simple web development framework with Sinatra looks and Dart power.
+homepage: https://github.com/Dreckr/Route
 environment:
   sdk: '>=0.4.7'
 dev_dependencies:
-  unittest: '>=0.4.3'
+  unittest: '>=0.4.7'

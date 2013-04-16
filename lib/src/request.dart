@@ -99,7 +99,7 @@ class Response {
     var file = new File(path);
     file.exists().then((found) {
       if (found) {
-        httpResponse.consume(file.openRead());
+        httpResponse.addStream(file.openRead());
       } else {
         httpResponse.statusCode = HttpStatus.NOT_FOUND;
         httpResponse.close();
