@@ -45,9 +45,26 @@ server.put('/bar').listen((req) => req.response.send('It is time to go to the ba
 
 RouteStreams and RouteStreamSubscriptions
 ------------------------------------------
+With RouteStreams and RouteStreamSubscriptions, you can add some awesome sauce to your code:
+```dart
+RouteStreamSubscriptions subscription = server.get('/filtered').where((req) {
+      if (req.params['name'] == 'Route') {
+        return true;
+      } else {
+      	// Remember to treat rejected requests so they won't stay alive waiting for a response... forever...
+        req.response.status = HttpStatus.FORBIDDEN;
+        req.response.close();
+        return false;
+      }
+    }).listen((req) => req.response.send('Filtered!'));
+    
+// When paused, no request will be passed to this subscription.
+subscription.pause();
 
-// TODO Issue #6
-// Present stream features and why they might be interesting
+// You can pause and resume subscriptions freely at runtime, without much trouble. This way, you can control your routes
+// while your server is stil running. 
+server.get('/resume', (req, res) { subscription.resume(); res.send('subscription resumed!'); });
+```
 
 License
 -------
