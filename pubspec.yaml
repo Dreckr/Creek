@@ -3,6 +3,6 @@ version: 0.0.1
 author: Diego Rocha
 description: A HttpRequest routing system with Sinatra style and using Streams.
 environment:
-  sdk: '>=0.4.3'
+  sdk: '>=0.4.7'
 dev_dependencies:
   unittest: '>=0.4.3'
