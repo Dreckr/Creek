@@ -1,0 +1,243 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>RouteStreamSubscription abstract class / route Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="route" data-type="RouteStreamSubscription">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../route.html">route</a> &rsaquo; <a href="../route/RouteStreamSubscription.html">RouteStreamSubscription</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../request.html">request</a></h2><h2><div class="icon-library"></div><a href="../route.html">route</a></h2><ul class="icon">
+<li><a href="../route/PauseStateChangeHandler.html"><div class="icon-interface"></div>PauseStateChangeHandler</a></li>
+<li><a href="../route/RouteNode.html"><div class="icon-class"></div>RouteNode</a></li>
+<li><a href="../route/RouteNodeType.html"><div class="icon-class"></div>RouteNodeType</a></li>
+<li><a href="../route/RouteStream.html"><div class="icon-class"></div>RouteStream</a></li>
+<li><a href="../route/RouteStreamController.html"><div class="icon-class"></div>RouteStreamController</a></li>
+<li><a href="../route/RouteStreamSink.html"><div class="icon-class"></div>RouteStreamSink</a></li>
+<li><div class="icon-class"></div><strong>RouteStreamSubscription</strong></li>
+<li><a href="../route/SubscriptionStateChangeHandler.html"><div class="icon-interface"></div>SubscriptionStateChangeHandler</a></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../server.html">server</a></h2><h2><div class="icon-library"></div><a href="../utils.html">utils</a></h2></div>
+<div class="content">
+        <h2><strong>RouteStreamSubscription</strong>
+          abstract class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>A <code>StreamSubscription</code> specialized in dealing with requests.</p>
+<p>A implementation of StreamSubscription built to guarantee proper behavior and provide more specialized functionality.</p>
+<pre class="source">
+abstract class RouteStreamSubscription extends StreamSubscription&lt;Request&gt; {
+ RouteStream stream;
+ bool get isPaused;
+ bool cancelOnError;
+ Function dataHandler;
+ Function doneHandler;
+ Function errorHandler;
+
+ factory RouteStreamSubscription (RouteStream stream,
+                                         void onData(Request data),
+                                     {   void onError(error),
+                                         void onDone(),
+                                         bool cancelOnError : true}) =&gt;
+   new _RouteStreamSubscription(stream, onData, onError, onDone, cancelOnError);
+
+ void _handleData (Request request);
+
+ void _handleError (error);
+
+ void _handleDone ();
+}
+</pre>
+</div>
+<h3>Extends</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../dart_async/StreamSubscription.html">StreamSubscription&lt;Request&gt;</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>RouteStreamSubscription</strong></span></p>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="RouteStreamSubscription">
+<button class="show-code">Code</button>
+factory <strong>RouteStreamSubscription</strong>(<a href="../route/RouteStream.html">RouteStream</a> stream, void onData(<a href="../request/Request.html">Request</a> data), {void onError(error), void onDone(), <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> cancelOnError: true}) <a class="anchor-link" href="#RouteStreamSubscription"
+              title="Permalink to RouteStreamSubscription.RouteStreamSubscription">#</a></h4>
+<div class="doc">
+<pre class="source">
+factory RouteStreamSubscription (RouteStream stream,
+                                       void onData(Request data),
+                                   {   void onError(error),
+                                       void onDone(),
+                                       bool cancelOnError : true}) =&gt;
+ new _RouteStreamSubscription(stream, onData, onError, onDone, cancelOnError);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="cancelOnError">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <strong>cancelOnError</strong> <a class="anchor-link"
+            href="#cancelOnError"
+            title="Permalink to RouteStreamSubscription.cancelOnError">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+bool cancelOnError
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="dataHandler">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/Function.html">Function</a>         <strong>dataHandler</strong> <a class="anchor-link"
+            href="#dataHandler"
+            title="Permalink to RouteStreamSubscription.dataHandler">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Function dataHandler
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="doneHandler">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/Function.html">Function</a>         <strong>doneHandler</strong> <a class="anchor-link"
+            href="#doneHandler"
+            title="Permalink to RouteStreamSubscription.doneHandler">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Function doneHandler
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="errorHandler">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/Function.html">Function</a>         <strong>errorHandler</strong> <a class="anchor-link"
+            href="#errorHandler"
+            title="Permalink to RouteStreamSubscription.errorHandler">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Function errorHandler
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="isPaused">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <strong>isPaused</strong> <a class="anchor-link"
+            href="#isPaused"
+            title="Permalink to RouteStreamSubscription.isPaused">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+bool get isPaused;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="stream">
+<button class="show-code">Code</button>
+<a href="../route/RouteStream.html">RouteStream</a>         <strong>stream</strong> <a class="anchor-link"
+            href="#stream"
+            title="Permalink to RouteStreamSubscription.stream">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+RouteStream stream
+</pre>
+</div>
+</div>
+</div>
+<div class="inherited">
+<h3>Methods</h3>
+<div class="method inherited"><h4 id="asFuture">
+abstract <a href="http://api.dartlang.org/dart_async/Future.html">Future</a> <strong>asFuture</strong>([futureValue]) <a class="anchor-link" href="#asFuture"
+              title="Permalink to RouteStreamSubscription.asFuture">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamSubscription.html">StreamSubscription</a> </div><div class="doc">
+<p>Returns a future that handles the <code>onDone</code> and <code>onError</code> callbacks.</p>
+<p>This method <em>overwrites</em> the existing <code>onDone</code> and <code>onError</code> callbacks
+with new ones that complete the returned future.</p>
+<p>In case of an error the subscription will automatically cancel (even
+when it was listening with <code>cancelOnError</code> set to <code>false</code>).</p>
+<p>In case of a <code>done</code> event the future completes with the given
+
+<span class="param">futureValue</span>.</p>
+</div>
+</div>
+<div class="method inherited"><h4 id="cancel">
+abstract void <strong>cancel</strong>() <a class="anchor-link" href="#cancel"
+              title="Permalink to RouteStreamSubscription.cancel">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamSubscription.html">StreamSubscription</a> </div><div class="doc">
+<p>Cancels this subscription. It will no longer receive events.</p>
+<p>If an event is currently firing, this unsubscription will only
+take effect after all subscribers have received the current event.</p>
+</div>
+</div>
+<div class="method inherited"><h4 id="onData">
+abstract void <strong>onData</strong>(void handleData(<a href="../route/RouteStreamSubscription.html">T</a> data)) <a class="anchor-link" href="#onData"
+              title="Permalink to RouteStreamSubscription.onData">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamSubscription.html">StreamSubscription</a> </div><div class="doc">
+<p>Set or override the data event handler of this subscription. </p>
+</div>
+</div>
+<div class="method inherited"><h4 id="onDone">
+abstract void <strong>onDone</strong>(void handleDone()) <a class="anchor-link" href="#onDone"
+              title="Permalink to RouteStreamSubscription.onDone">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamSubscription.html">StreamSubscription</a> </div><div class="doc">
+<p>Set or override the done event handler of this subscription. </p>
+</div>
+</div>
+<div class="method inherited"><h4 id="onError">
+abstract void <strong>onError</strong>(void handleError(error)) <a class="anchor-link" href="#onError"
+              title="Permalink to RouteStreamSubscription.onError">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamSubscription.html">StreamSubscription</a> </div><div class="doc">
+<p>Set or override the error event handler of this subscription. </p>
+</div>
+</div>
+<div class="method inherited"><h4 id="pause">
+abstract void <strong>pause</strong>([<a href="http://api.dartlang.org/dart_async/Future.html">Future</a> resumeSignal]) <a class="anchor-link" href="#pause"
+              title="Permalink to RouteStreamSubscription.pause">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamSubscription.html">StreamSubscription</a> </div><div class="doc">
+<p>Request that the stream pauses events until further notice.</p>
+<p>If 
+<span class="param">resumeSignal</span> is provided, the stream will undo the pause
+when the future completes. If the future completes with an error,
+it will not be handled!</p>
+<p>A call to <code>resume</code> will also undo a pause.</p>
+<p>If the subscription is paused more than once, an equal number
+of resumes must be performed to resume the stream.</p>
+</div>
+</div>
+<div class="method inherited"><h4 id="resume">
+abstract void <strong>resume</strong>() <a class="anchor-link" href="#resume"
+              title="Permalink to RouteStreamSubscription.resume">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamSubscription.html">StreamSubscription</a> </div><div class="doc">
+<p>Resume after a pause.</p>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-16 17:27:48.632</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        

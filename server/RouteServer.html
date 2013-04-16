@@ -1,0 +1,269 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>RouteServer abstract class / server Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="server" data-type="RouteServer">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../server.html">server</a> &rsaquo; <a href="../server/RouteServer.html">RouteServer</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../request.html">request</a></h2><h2><div class="icon-library"></div><a href="../route.html">route</a></h2><h2><div class="icon-library"></div><a href="../server.html">server</a></h2><ul class="icon">
+<li><a href="../server/NotFoundHandler.html"><div class="icon-interface"></div>NotFoundHandler</a></li>
+<li><div class="icon-class"></div><strong>RouteServer</strong></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../utils.html">utils</a></h2></div>
+<div class="content">
+        <h2><strong>RouteServer</strong>
+          abstract class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>A <code>HttpServer</code> wrapper that routes request.</p>
+<p>This wrapper allows you to specify routes and handlers for this routes before the server is even created. All the
+routes are stored to be used later, when the server is running.</p>
+<p>It can be used as the following code:</p>
+<pre><code>RouteServer server = new RouteServer('127.0.0.1', 7070, 0);
+server
+  ..get('/foo').listen((Request req) =&gt; req.response.send('Hello, Route!'))
+  ..post('/bar', (Request req, Response res) =&gt; res.send('Hello, Dartisans!'));
+
+server.run().then((RouteServer srv) =&gt; print('Route is running!'));
+</code></pre>
+<pre class="source">
+abstract class RouteServer {
+ HttpServer httpServer;
+ String address;
+ int port;
+ int backlog;
+ bool get isRunning;
+ NotFoundHandler notFoundHandler;
+
+ factory RouteServer ([String address = '127.0.0.1', int port = 0, int backlog = 0]) =&gt;
+     new _RouteServerImpl(address, port, backlog);
+
+ /**
+  * Creates a new DELETE route and returns it's [RouteStream].
+  *
+  * Creates a new DELETE route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+  * it will be used to listen to the stream and the subscription will be returned instead.
+  */
+ delete (String path, [void handler (Request req, Response res)]);
+
+ /**
+  * Creates a new GET route and returns it's [RouteStream].
+  *
+  * Creates a new GET route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+  * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
+  */
+ get (String path, [void handler (Request req, Response res)]);
+
+ /**
+  * Creates a new POST route and returns it's [RouteStream].
+  *
+  * Creates a new POST route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+  * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
+  */
+ post (String path, [void handler (Request req, Response res)]);
+
+ /**
+  * Creates a new PUT route and returns it's [RouteStream].
+  *
+  * Creates a new PUT route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+  * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
+  */
+ put (String path, [void handler (Request req, Response res)]);
+
+ /**
+  * Takes a request and treats it with a defined handler.
+  */
+ void route (HttpRequest httpRequest);
+
+ /**
+  * Creates a [HttpServer] by listening to the specified address and port.
+  */
+ Future&lt;RouteServer&gt; run ();
+
+ /**
+  * Closes the [HttpServer] and closes all routes.
+  */
+ close ();
+
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="RouteServer">
+<button class="show-code">Code</button>
+factory <strong>RouteServer</strong>([<a href="http://api.dartlang.org/dart_core/String.html">String</a> address = '127.0.0.1', <a href="http://api.dartlang.org/dart_core/int.html">int</a> port = 0, <a href="http://api.dartlang.org/dart_core/int.html">int</a> backlog = 0]) <a class="anchor-link" href="#RouteServer"
+              title="Permalink to RouteServer.RouteServer">#</a></h4>
+<div class="doc">
+<pre class="source">
+factory RouteServer ([String address = '127.0.0.1', int port = 0, int backlog = 0]) =&gt;
+   new _RouteServerImpl(address, port, backlog);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="address">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>address</strong> <a class="anchor-link"
+            href="#address"
+            title="Permalink to RouteServer.address">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String address
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="backlog">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/int.html">int</a>         <strong>backlog</strong> <a class="anchor-link"
+            href="#backlog"
+            title="Permalink to RouteServer.backlog">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+int backlog
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="httpServer">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_io/HttpServer.html">HttpServer</a>         <strong>httpServer</strong> <a class="anchor-link"
+            href="#httpServer"
+            title="Permalink to RouteServer.httpServer">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+HttpServer httpServer
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="isRunning">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <strong>isRunning</strong> <a class="anchor-link"
+            href="#isRunning"
+            title="Permalink to RouteServer.isRunning">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+bool get isRunning;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="notFoundHandler">
+<button class="show-code">Code</button>
+<a href="../server/NotFoundHandler.html">NotFoundHandler</a>         <strong>notFoundHandler</strong> <a class="anchor-link"
+            href="#notFoundHandler"
+            title="Permalink to RouteServer.notFoundHandler">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+NotFoundHandler notFoundHandler
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="port">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/int.html">int</a>         <strong>port</strong> <a class="anchor-link"
+            href="#port"
+            title="Permalink to RouteServer.port">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+int port
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="close">
+abstract dynamic <strong>close</strong>() <a class="anchor-link" href="#close"
+              title="Permalink to RouteServer.close">#</a></h4>
+<div class="doc">
+<p>Closes the <code>HttpServer</code> and closes all routes.</p>
+</div>
+</div>
+<div class="method"><h4 id="delete">
+abstract dynamic <strong>delete</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#delete"
+              title="Permalink to RouteServer.delete">#</a></h4>
+<div class="doc">
+<p>Creates a new DELETE route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new DELETE route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
+it will be used to listen to the stream and the subscription will be returned instead.</p>
+</div>
+</div>
+<div class="method"><h4 id="get">
+abstract dynamic <strong>get</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#get"
+              title="Permalink to RouteServer.get">#</a></h4>
+<div class="doc">
+<p>Creates a new GET route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new GET route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
+it will be used to listen to the stream and a <code>RouteStreamSubscription</code> will be returned instead.</p>
+</div>
+</div>
+<div class="method"><h4 id="post">
+abstract dynamic <strong>post</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#post"
+              title="Permalink to RouteServer.post">#</a></h4>
+<div class="doc">
+<p>Creates a new POST route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new POST route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
+it will be used to listen to the stream and a <code>RouteStreamSubscription</code> will be returned instead.</p>
+</div>
+</div>
+<div class="method"><h4 id="put">
+abstract dynamic <strong>put</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> path, [void handler(<a href="../request/Request.html">Request</a> req, <a href="../request/Response.html">Response</a> res)]) <a class="anchor-link" href="#put"
+              title="Permalink to RouteServer.put">#</a></h4>
+<div class="doc">
+<p>Creates a new PUT route and returns it's <code>RouteStream</code>.</p>
+<p>Creates a new PUT route and returns it's <code>RouteStream</code>. An optional handler may be passed. If this handler is passed,
+it will be used to listen to the stream and a <code>RouteStreamSubscription</code> will be returned instead.</p>
+</div>
+</div>
+<div class="method"><h4 id="route">
+abstract void <strong>route</strong>(<a href="http://api.dartlang.org/dart_io/HttpRequest.html">HttpRequest</a> httpRequest) <a class="anchor-link" href="#route"
+              title="Permalink to RouteServer.route">#</a></h4>
+<div class="doc">
+<p>Takes a request and treats it with a defined handler.</p>
+</div>
+</div>
+<div class="method"><h4 id="run">
+abstract <a href="http://api.dartlang.org/dart_async/Future.html">Future</a>&lt;<a href="../server/RouteServer.html">RouteServer</a>&gt; <strong>run</strong>() <a class="anchor-link" href="#run"
+              title="Permalink to RouteServer.run">#</a></h4>
+<div class="doc">
+<p>Creates a <code>HttpServer</code> by listening to the specified address and port.</p>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-16 17:27:48.741</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        
