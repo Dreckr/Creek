@@ -20,7 +20,7 @@ is a Stream, your framework should work accordingly to give as much power as pos
 
 Usage
 -----
-Running a Route server is really straigth forward:
+Running a Route server is really straight forward:
 
 ```dart
 RouteServer server = new RouteServer('127.0.0.1', 7070);
