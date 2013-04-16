@@ -37,7 +37,7 @@ Creating routes is easy:
 ```dart
 server
 	..get('/', (req, res) => res.send('Hello, Dartisans!'))
-	..post('/foo', (req, res) => res.send('It's so easy, it got boring already... or maybe not!'));
+	..post('/foo', (req, res) => res.send('It is so easy, it got boring already... or maybe not!'));
 	
 // Alternatively, you can do this
 server.put('/bar').listen((req) => req.response.send('It is time to go to the bar'));
