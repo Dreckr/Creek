@@ -27,13 +27,21 @@ RouteServer server = new RouteServer('127.0.0.1', 7070);
 server.run();
 ```
 
-When a RouteServer is instanciated, it stores the address and the port passed. // TODO continue...
+When a RouteServer is instanciated, it stores the address and the port passed. The HttpServer is not created right away,
+though, it is only created when you call run(). This method returns a Future, which will give a RouteServer when
+complete.
 
 Routes
 ------
-
-// TODO Issue #6
-// Mention route tree
+Creating routes is easy:
+```dart
+server
+	..get('/', (req, res) => res.send('Hello, Dartisans!'))
+	..post('/foo', (req, res) => res.send('It's so easy, it got boring already... or maybe not!'));
+	
+// Alternatively, you can do this
+server.put('/bar').listen((req) => req.response.send('It is time to go to the bar'));
+```
 
 RouteStreams and RouteStreamSubscriptions
 ------------------------------------------
