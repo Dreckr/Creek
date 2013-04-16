@@ -27,19 +27,44 @@ RouteServer server = new RouteServer('127.0.0.1', 7070);
 server.run();
 ```
 
-When a RouteServer is instanciated, it stores the address and the port passed. // TODO continue...
+When a RouteServer is instanciated, it stores the address and the port passed. The HttpServer is not created right away,
+though, it is only created when you call run(). This method returns a Future, which will give a RouteServer when
+complete.
 
 Routes
 ------
-
-// TODO Issue #6
-// Mention route tree
+Creating routes is easy:
+```dart
+server
+	..get('/', (req, res) => res.send('Hello, Dartisans!'))
+	..post('/foo', (req, res) => res.send('It is so easy, it got boring already... or maybe not!'));
+	
+// Alternatively, you can do this
+server.put('/bar').listen((req) => req.response.send('It is time to go to the bar'));
+```
 
 RouteStreams and RouteStreamSubscriptions
 ------------------------------------------
+With RouteStreams and RouteStreamSubscriptions, you can add some awesome sauce to your code:
+```dart
+RouteStreamSubscriptions subscription = server.get('/filtered').where((req) {
+      if (req.params['name'] == 'Route') {
+        return true;
+      } else {
+      	// Remember to treat rejected requests so they won't stay alive waiting for a response... forever...
+        req.response.status = HttpStatus.FORBIDDEN;
+        req.response.close();
+        return false;
+      }
+    }).listen((req) => req.response.send('Filtered!'));
+    
+// When paused, no request will be passed to this subscription.
+subscription.pause();
 
-// TODO Issue #6
-// Present stream features and why they might be interesting
+// You can pause and resume subscriptions freely at runtime, without much trouble. This way, you can control your routes
+// while your server is stil running. 
+server.get('/resume', (req, res) { subscription.resume(); res.send('subscription resumed!'); });
+```
 
 License
 -------
