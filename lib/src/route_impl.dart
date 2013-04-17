@@ -12,11 +12,11 @@ class _RouteNode implements RouteNode {
 
   _RouteNode (this.type, this.stepName);
 
-  RouteNode findNode (List<String> routeSteps) {
-    return this._findNode(routeSteps, new List.from(this.keysNames));
-  }
-
-  RouteNode _findNode (List<String> routeSteps, List<String> keysNames) {
+  RouteNode findNode (List<String> routeSteps, [List<String> keysNames]) {
+    if (keysNames == null)
+      keysNames = [];
+    else
+      keysNames = new List.from(keysNames);
     if (routeSteps.length == 0) {
       this.keysNames = keysNames;
       return this;
@@ -42,7 +42,7 @@ class _RouteNode implements RouteNode {
 
     var childNode = new RouteNode(routeType, step);
     this.children.add(childNode);
-    return childNode._findNode(routeSteps, keysNames);
+    return childNode.findNode(routeSteps, keysNames);
   }
 
   bool routeRequest (RoutingRequest routingRequest) {

@@ -54,7 +54,7 @@ abstract class RouteNode {
    * Searches the tree that has this node as root until it finds the node identified by this steps. If it doesn't find
    * a node identified by this steps, all node necessary to reach it are created.
    */
-  RouteNode findNode (List<String> routeSteps);
+  RouteNode findNode (List<String> routeSteps, [List<String> keysNames]);
 
   /**
    * Passes the request to the appropriate stream and returns true if succeded.
