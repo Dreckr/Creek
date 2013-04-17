@@ -18,15 +18,15 @@ typedef void NotFoundHandler (Request request, Response response);
  *
  * It can be used as the following code:
  *
- *     RouteServer server = new RouteServer('127.0.0.1', 7070, 0);
+ *     Creek server = new Creek('127.0.0.1', 7070, 0);
  *     server
  *       ..get('/foo').listen((Request req) => req.response.send('Hello, Route!'))
  *       ..post('/bar', (Request req, Response res) => res.send('Hello, Dartisans!'));
  *
- *     server.run().then((RouteServer srv) => print('Route is running!'));
+ *     server.run().then((Creek srv) => print('Route is running!'));
  *
  */
-abstract class RouteServer {
+abstract class Creek {
   HttpServer httpServer;
   String address;
   int port;
@@ -34,8 +34,8 @@ abstract class RouteServer {
   bool get isRunning;
   NotFoundHandler notFoundHandler;
 
-  factory RouteServer ([String address = '127.0.0.1', int port = 0, int backlog = 0]) =>
-      new _RouteServerImpl(address, port, backlog);
+  factory Creek ([String address = '127.0.0.1', int port = 0, int backlog = 0]) =>
+      new _CreekImpl(address, port, backlog);
 
   /**
    * Creates a new DELETE route and returns it's [RouteStream].
@@ -77,7 +77,7 @@ abstract class RouteServer {
   /**
    * Creates a [HttpServer] by listening to the specified address and port.
    */
-  Future<RouteServer> run ();
+  Future<Creek> run ();
 
   /**
    * Closes the [HttpServer] and closes all routes.

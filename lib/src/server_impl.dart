@@ -1,6 +1,6 @@
 part of server;
 
-class _RouteServerImpl implements RouteServer {
+class _CreekImpl implements Creek {
   HttpServer httpServer;
   RouteNode _deleteTree = new RouteNode(RouteNodeType.STRICT, '');
   RouteNode _getTree = new RouteNode(RouteNodeType.STRICT, '');
@@ -13,7 +13,7 @@ class _RouteServerImpl implements RouteServer {
   int port;
   int backlog;
 
-  _RouteServerImpl (this.address, this.port, this.backlog);
+  _CreekImpl (this.address, this.port, this.backlog);
 
   delete (String path, [void handler (Request req, Response res)]) =>
       this._fetchRoute(this._deleteTree, path, handler);
@@ -75,7 +75,7 @@ class _RouteServerImpl implements RouteServer {
     }
   }
 
-  Future<RouteServer> run () {
+  Future<Creek> run () {
     Completer completer = new Completer();
     HttpServer.bind(this.address, this.port, this.backlog).then(
         (server) {

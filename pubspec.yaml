@@ -1,8 +1,8 @@
-name: Route
+name: creek
 version: 0.0.1
 author: Diego Rocha
 description: A simple web development framework with Sinatra looks and Dart power.
-homepage: https://github.com/Dreckr/Route
+homepage: https://github.com/Dreckr/Creek
 environment:
   sdk: '>=0.4.7'
 dev_dependencies:

@@ -1,10 +1,10 @@
-Route
+Creek
 =====
-[![Build Status](https://drone.io/github.com/Dreckr/Route/status.png)](https://drone.io/github.com/Dreckr/Route/latest)
+[![Build Status](https://drone.io/github.com/Dreckr/Creek/status.png)](https://drone.io/github.com/Dreckr/Creek/latest)
 
 A simple web development framework with Sinatra looks and Dart power.
 
-Route is a web development framework that let's you feel at home while you take advantage of Dart. It does
+Creek is a web development framework that let's you feel at home while you take advantage of Dart. It does
 things a little different than most Sinatra-inspired frameworks by using a routing tree (instead of a set of RegExp
 matchers) and Streams API.
 
@@ -20,10 +20,10 @@ is a Stream, your framework should work accordingly to give as much power as pos
 
 Usage
 -----
-Running a Route server is really straight forward:
+Running a Creek server is really straight forward:
 
 ```dart
-RouteServer server = new RouteServer('127.0.0.1', 7070);
+Creek server = new Creek('127.0.0.1', 7070);
 server.run();
 ```
 
