@@ -44,7 +44,7 @@ void main() {
 
   server
     ..get('/filtered').where((req) {
-      if (req.params['name'] == 'Route') {
+      if (req.params['name'] == 'Creek') {
         return true;
       } else {
         req.response.status = HttpStatus.FORBIDDEN;
@@ -183,7 +183,7 @@ void main() {
 
       // TODO Filtering tests
       test('accepted filtered get route', () {
-        client.open('GET', 'localhost', 7070, '/filtered?name=Route').then(expectAsync1((req) {
+        client.open('GET', 'localhost', 7070, '/filtered?name=Creek').then(expectAsync1((req) {
           req.close().then(expectAsync1((res) {
             expect(res.statusCode, equals(HttpStatus.OK));
             res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Passed filter')));

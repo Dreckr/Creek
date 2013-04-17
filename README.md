@@ -11,7 +11,7 @@ matchers) and Streams API.
 A routing tree is a tree with all the accessible URL paths of a server. This tree allows the framework to be lighting 
 fast while finding the right handler of a HTTP request. Also, it stores some metadata about your routes that might
 come in handy. For example, when close a route (e.g., "/foo"), you might want to close all it's child routes (e.g., 
-"/foo/bar", "/foo/barz", "/foo/bar/qux") and Route can do exactly that.
+"/foo/bar", "/foo/barz", "/foo/bar/qux") and Creek can do exactly that.
 
 With the use of the Streams API, you get full control of your request flow. You can filter requests by calling 
 Stream.where, redirect requests internally to another consumer with Stream.pipe, modify request in some manner using
@@ -27,8 +27,8 @@ Creek server = new Creek('127.0.0.1', 7070);
 server.run();
 ```
 
-When a RouteServer is instanciated, it stores the address and the port passed. The HttpServer is not created right away,
-though, it is only created when you call run(). This method returns a Future, which will give a RouteServer when
+When a Creek server is instanciated, it stores the address and the port passed. The HttpServer is not created right away,
+though, it is only created when you call run(). This method returns a Future, which will give a Creek server when
 complete.
 
 Routes
@@ -48,7 +48,7 @@ RouteStreams and RouteStreamSubscriptions
 With RouteStreams and RouteStreamSubscriptions, you can add some awesome sauce to your code:
 ```dart
 RouteStreamSubscriptions subscription = server.get('/filtered').where((req) {
-      if (req.params['name'] == 'Route') {
+      if (req.params['name'] == 'Creek') {
         return true;
       } else {
       	// Remember to treat rejected requests so they won't stay alive waiting for a response... forever...

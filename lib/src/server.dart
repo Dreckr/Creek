@@ -20,10 +20,10 @@ typedef void NotFoundHandler (Request request, Response response);
  *
  *     Creek server = new Creek('127.0.0.1', 7070, 0);
  *     server
- *       ..get('/foo').listen((Request req) => req.response.send('Hello, Route!'))
+ *       ..get('/foo').listen((Request req) => req.response.send('Hello, Creek!'))
  *       ..post('/bar', (Request req, Response res) => res.send('Hello, Dartisans!'));
  *
- *     server.run().then((Creek srv) => print('Route is running!'));
+ *     server.run().then((Creek srv) => print('Creek is running!'));
  *
  */
 abstract class Creek {

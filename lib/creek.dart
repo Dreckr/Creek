@@ -1,4 +1,4 @@
-library route;
+library creek;
 
 import 'src/request.dart';
 import 'src/route.dart';
