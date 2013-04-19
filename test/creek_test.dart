@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:unittest/unittest.dart';
 import 'package:unittest/vm_config.dart';
 
+String address = '127.0.0.1';
+int port = 7070;
+
 void main() {
   useVMConfiguration();
 
@@ -43,7 +46,7 @@ void main() {
     res.send('Howdy, stranger!');
   };
 
-  creek.bind('127.0.0.1', 7070).then(doTests,
+  creek.bind(address, port).then(doTests,
       onError: doTests);
 
 }
@@ -57,7 +60,7 @@ void doTests (HttpServerSubscription serverSubscription) {
 
   group('Routing system', () {
     test('simple delete route', () {
-      client.open('DELETE', 'localhost', 7070, '/foo').then(expectAsync1((req) {
+      client.open('DELETE', address, port, '/foo').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Deleting success')));
@@ -66,7 +69,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('simple get route', () {
-      client.open('GET', 'localhost', 7070, '/foo').then(expectAsync1((req) {
+      client.open('GET', address, port, '/foo').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Getting success')));
@@ -76,7 +79,7 @@ void doTests (HttpServerSubscription serverSubscription) {
 
 
     test('simple post route', () {
-      client.open('POST', 'localhost', 7070, '/foo').then(expectAsync1((req) {
+      client.open('POST', address, port, '/foo').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Posting success')));
@@ -85,7 +88,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('simple put route', () {
-      client.open('PUT', 'localhost', 7070, '/foo').then(expectAsync1((req) {
+      client.open('PUT', address, port, '/foo').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Putting success')));
@@ -94,7 +97,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic delete route', () {
-      client.open('DELETE', 'localhost', 7070, '/bar').then(expectAsync1((req) {
+      client.open('DELETE', address, port, '/bar').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic delete')));
@@ -103,7 +106,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic get route', () {
-      client.open('GET', 'localhost', 7070, '/bar').then(expectAsync1((req) {
+      client.open('GET', address, port, '/bar').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic get')));
@@ -112,7 +115,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic post route', () {
-      client.open('POST', 'localhost', 7070, '/bar').then(expectAsync1((req) {
+      client.open('POST', address, port, '/bar').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic post')));
@@ -121,7 +124,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic put route', () {
-      client.open('PUT', 'localhost', 7070, '/bar').then(expectAsync1((req) {
+      client.open('PUT', address, port, '/bar').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic put')));
@@ -130,7 +133,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('key delete route', () {
-      client.open('DELETE', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
+      client.open('DELETE', address, port, '/bar/test').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           expect(res.headers['key'].contains('test'), isTrue);
@@ -140,7 +143,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('key get route', () {
-      client.open('GET', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
+      client.open('GET', address, port, '/bar/test').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           expect(res.headers['key'].contains('test'), isTrue);
@@ -150,7 +153,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('key post route', () {
-      client.open('POST', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
+      client.open('POST', address, port, '/bar/test').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           expect(res.headers['key'].contains('test'), isTrue);
@@ -160,7 +163,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('key put route', () {
-      client.open('PUT', 'localhost', 7070, '/bar/test').then(expectAsync1((req) {
+      client.open('PUT', address, port, '/bar/test').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           expect(res.headers['key'].contains('test'), isTrue);
@@ -170,7 +173,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('refused filtered get route', () {
-      client.open('GET', 'localhost', 7070, '/filtered').then(expectAsync1((req) {
+      client.open('GET', address, port, '/filtered').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.FORBIDDEN));
         }));
@@ -180,7 +183,7 @@ void doTests (HttpServerSubscription serverSubscription) {
 
     // TODO Filtering tests
     test('accepted filtered get route', () {
-      client.open('GET', 'localhost', 7070, '/filtered?name=Creek').then(expectAsync1((req) {
+      client.open('GET', address, port, '/filtered?name=Creek').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Passed filter')));
@@ -189,7 +192,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('not found delete route', () {
-      client.open('DELETE', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+      client.open('DELETE', address, port, '/something/weird').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));
@@ -198,7 +201,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('not found get route', () {
-      client.open('GET', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+      client.open('GET', address, port, '/something/weird').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));
@@ -207,7 +210,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('not found post route', () {
-      client.open('POST', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+      client.open('POST', address, port, '/something/weird').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));
@@ -216,7 +219,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('not found put route', () {
-      client.open('PUT', 'localhost', 7070, '/something/weird').then(expectAsync1((req) {
+      client.open('PUT', address, port, '/something/weird').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.NOT_FOUND));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Howdy, stranger!')));

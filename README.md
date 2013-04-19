@@ -38,19 +38,19 @@ Routes
 ------
 Creating routes is easy:
 ```dart
-server
+creek
 	..get('/', (req, res) => res.send('Hello, Dartisans!'))
 	..post('/foo', (req, res) => res.send('It is so easy, it got boring already... or maybe not!'));
 	
 // Alternatively, you can do this
-server.put('/bar').listen((req) => req.response.send('It is time to go to the bar'));
+creek.put('/bar').listen((req) => req.response.send('It is time to go to the bar'));
 ```
 
 RouteStreams and RouteStreamSubscriptions
 ------------------------------------------
 With RouteStreams and RouteStreamSubscriptions, you can add some awesome sauce to your code:
 ```dart
-RouteStreamSubscriptions subscription = server.get('/filtered').where((req) {
+RouteStreamSubscriptions subscription = creek.get('/filtered').where((req) {
       if (req.params['name'] == 'Creek') {
         return true;
       } else {
