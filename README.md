@@ -23,13 +23,16 @@ Usage
 Running a Creek server is really straight forward:
 
 ```dart
-Creek server = new Creek('127.0.0.1', 7070);
-server.run();
+Creek creek = new Creek();
+creek.bind('127.0.0.1', 7070);
+
+//Or
+HttpServer.bind('127.0.0.1', 7071).then((server) => creek.bind(server));
 ```
 
-When a Creek server is instanciated, it stores the address and the port passed. The HttpServer is not created right away,
-though, it is only created when you call run(). This method returns a Future, which will give a Creek server when
-complete.
+When a Creek is instanciated, it can be used to create all routes right away. A HttpServer is not created though, 
+so you have to tell Creek to bind to an address or a HttpServer. The bind() method returns a Future, which will gives
+you a HttpServer server when complete.
 
 Routes
 ------

@@ -1,19 +1,16 @@
 part of server;
 
 class _CreekImpl implements Creek {
-  HttpServer httpServer;
   RouteNode _deleteTree = new RouteNode(RouteNodeType.STRICT, '');
   RouteNode _getTree = new RouteNode(RouteNodeType.STRICT, '');
   RouteNode _postTree = new RouteNode(RouteNodeType.STRICT, '');
   RouteNode _putTree = new RouteNode(RouteNodeType.STRICT, '');
   NotFoundHandler notFoundHandler;
-  bool _running = false;
-  bool get isRunning => this._running;
-  String address;
-  int port;
-  int backlog;
+  List<HttpServerSubscription> serverSubscriptions = [];
+  var _onErrorHandler;
+  var _onDoneHandler;
 
-  _CreekImpl (this.address, this.port, this.backlog);
+  _CreekImpl ();
 
   delete (String path, [void handler (Request req, Response res)]) =>
       this._fetchRoute(this._deleteTree, path, handler);
@@ -75,31 +72,58 @@ class _CreekImpl implements Creek {
     }
   }
 
-  Future<Creek> run () {
-    Completer completer = new Completer();
-    HttpServer.bind(this.address, this.port, this.backlog).then(
-        (server) {
-          this._running = true;
-          this.httpServer = server;
-          this.httpServer.listen((HttpRequest request) => this.route(request));
-          completer.complete(this);
-        },
-        onError:
-        (exception) {
-          completer.completeError(exception);
-        });
+  Future<HttpServerSubscription> bind ([serverOrAddress, port = 0, backlog = 0]) {
+    Completer<HttpServerSubscription> completer = new Completer<HttpServerSubscription>();
+    if (serverOrAddress is HttpServer) {
+      completer.complete(this._bind(serverOrAddress));
+    } else {
+      HttpServer.bind(serverOrAddress, port, backlog).then(
+          (HttpServer server) => completer.complete(this._bind(server)),
+          onError: (error) => completer.completeError(error)
+      );
+
+    }
     return completer.future;
   }
 
-  close () {
-    if (this.isRunning)
-      this.httpServer.close();
+  HttpServerSubscription _bind (HttpServer server) {
+    StreamSubscription<HttpRequest> streamSubscription = server.listen(
+        (HttpRequest httpRequest) => this.route(httpRequest),
+        onError: this._onError,
+        onDone: this._onDone);
 
+    HttpServerSubscription subscription = new HttpServerSubscription._(streamSubscription, server);
+    this.serverSubscriptions.add(subscription);
+
+    return subscription;
+  }
+
+  void onError (void onErrorHandler (error)) {
+    this._onErrorHandler = onErrorHandler;
+  }
+
+  _onError (error) {
+    if (this._onErrorHandler != null)
+      this._onErrorHandler(error);
+  }
+
+  void onDone (void onDoneHandler ()) {
+    this._onDoneHandler = onDoneHandler;
+  }
+
+  _onDone () {
+    if (this._onDoneHandler != null)
+      this._onDoneHandler();
+  }
+
+  close () {
     this._deleteTree.closeStream(true);
     this._getTree.closeStream(true);
     this._postTree.closeStream(true);
     this._putTree.closeStream(true);
-    this._running = false;
+
+    for (StreamSubscription<HttpRequest> subs in this.serverSubscriptions)
+      subs.cancel();
   }
 
 }

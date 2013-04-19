@@ -11,31 +11,35 @@ part 'server_impl.dart';
 typedef void NotFoundHandler (Request request, Response response);
 
 /**
- * A [HttpServer] wrapper that routes request.
+ * A lightweight framework that routes HttpRequests and provides easier handling.
  *
- * This wrapper allows you to specify routes and handlers for this routes before the server is even created. All the
- * routes are stored to be used later, when the server is running.
+ * This framework allows you to specify routes and handlers before a server is even created. All the
+ * routes are stored to be used later, when the server is binded.
  *
  * It can be used as the following code:
  *
- *     Creek server = new Creek('127.0.0.1', 7070, 0);
- *     server
+ *     Creek creek = new Creek();
+ *     creek
  *       ..get('/foo').listen((Request req) => req.response.send('Hello, Creek!'))
  *       ..post('/bar', (Request req, Response res) => res.send('Hello, Dartisans!'));
  *
- *     server.run().then((Creek srv) => print('Creek is running!'));
+ *     creek.bind('127.0.0.1', 7070).then((HttpServer server) => print('Creek is running!'));
  *
+ * In this case, an address and a port is passed to the bind() method, so Creek will create its own HttpServer and
+ * will subscribe to it. If an existing HttpServer was passed to this method, Creek would listen on it.
+ *
+ * It is possible to bind the same Creek to several servers by simply calling bind() multiple time with different
+ * arguments.
  */
 abstract class Creek {
-  HttpServer httpServer;
-  String address;
-  int port;
-  int backlog;
-  bool get isRunning;
+  /// Handler used when there is no route for a HttpRequest
   NotFoundHandler notFoundHandler;
 
-  factory Creek ([String address = '127.0.0.1', int port = 0, int backlog = 0]) =>
-      new _CreekImpl(address, port, backlog);
+  /// All subscriptions to HttpServers
+  List<HttpServerSubscription> serverSubscriptions;
+
+  factory Creek () =>
+      new _CreekImpl();
 
   /**
    * Creates a new DELETE route and returns it's [RouteStream].
@@ -77,12 +81,40 @@ abstract class Creek {
   /**
    * Creates a [HttpServer] by listening to the specified address and port.
    */
-  Future<Creek> run ();
+  Future<HttpServerSubscription> bind ([serverOrAddress, port, backlog]);
+
+  void onError (void onErrorHandler (error));
+
+  void onDone (void onDoneHandler ());
 
   /**
-   * Closes the [HttpServer] and closes all routes.
+   * Closes all HttpServers subscriptions and closes all routes.
    */
   close ();
 
+}
+
+/**
+ * A StreamSubscription wrapper that keeps a reference to the server.
+ */
+class HttpServerSubscription implements StreamSubscription<HttpRequest> {
+  StreamSubscription<HttpRequest> _subscription;
+  HttpServer server;
+
+  HttpServerSubscription._(this._subscription, this.server);
+
+  void cancel () => this._subscription.cancel();
+
+  void onData(handleData) => this._subscription.onData(handleData);
+
+  void onDone(handleDone) => this._subscription.onDone(handleDone);
+
+  void onError(handleError) => this._subscription.onError(handleError);
+
+  void pause([resumeSignal]) => this._subscription.pause(resumeSignal);
+
+  void resume() => this._subscription.resume();
+
+  Future asFuture([futureValue]) => this._subscription.asFuture(futureValue);
 }
 

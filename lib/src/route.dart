@@ -144,9 +144,9 @@ abstract class RouteStream implements Stream<Request> {
    *
    * Creates a subscription by listening to the stream. The onData handler is converted to a single parameter handler.
    */
-  RouteStreamSubscription treat (void onData(Request request, Response response),
-                                 { void onError(error),
-                                    void onDone(),
+  RouteStreamSubscription treat (void onData (Request request, Response response),
+                                 { void onError (error),
+                                    void onDone (),
                                     bool cancelOnError});
 
   void _add (Request request);
@@ -171,9 +171,9 @@ abstract class RouteStreamSubscription extends StreamSubscription<Request> {
   Function errorHandler;
 
   factory RouteStreamSubscription (RouteStream stream,
-                                          void onData(Request data),
-                                      {   void onError(error),
-                                          void onDone(),
+                                          void onData (Request data),
+                                      {   void onError (error),
+                                          void onDone (),
                                           bool cancelOnError : true}) =>
     new _RouteStreamSubscription(stream, onData, onError, onDone, cancelOnError);
 

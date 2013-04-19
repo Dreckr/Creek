@@ -38,7 +38,7 @@ class _RouteNode implements RouteNode {
     for (var child in this.children)
       if ((routeType == RouteNodeType.STRICT && child.stepName == step) ||
           (child.type == routeType && routeType != RouteNodeType.STRICT))
-        return child._findNode(routeSteps, keysNames);
+        return child.findNode(routeSteps, keysNames);
 
     var childNode = new RouteNode(routeType, step);
     this.children.add(childNode);
@@ -111,7 +111,7 @@ class _RouteStreamControllerImpl implements RouteStreamController {
   bool get isPaused => sink._stream.isPaused;
   bool get hasListener => sink._stream.hasListener;
 
-  _RouteStreamControllerImpl(onPauseStateChange, onSubscriptionStateChange) {
+  _RouteStreamControllerImpl (onPauseStateChange, onSubscriptionStateChange) {
     this.sink = new _RouteStreamSinkImpl(new _RouteStreamImpl());
     this.sink._stream._pauseHandler = onPauseStateChange;
     this.sink._stream._subscriptionHandler = onSubscriptionStateChange;
@@ -168,16 +168,16 @@ class _RouteStreamImpl extends Stream<Request> implements RouteStream {
   PauseStateChangeHandler _pauseHandler;
   SubscriptionStateChangeHandler _subscriptionHandler;
 
-  RouteStreamSubscription treat (void onData(Request request, Response response),
-                                  { void onError(error),
-                                    void onDone(),
+  RouteStreamSubscription treat (void onData (Request request, Response response),
+                                  { void onError (error),
+                                    void onDone (),
                                     bool cancelOnError}) =>
                                         listen((Request req) => onData(req, req.response),
                                           onError: onError, onDone: onDone, cancelOnError: cancelOnError);
 
-  RouteStreamSubscription listen (void onData(Request request),
-                                  { void onError(error),
-                                    void onDone(),
+  RouteStreamSubscription listen (void onData (Request request),
+                                  { void onError (error),
+                                    void onDone (),
                                     bool cancelOnError}) {
 
     if (this._closed)
@@ -236,17 +236,17 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
     this.stream._close();
   }
 
-  void onData (void handleData(Request request)) {
+  void onData (void handleData (Request request)) {
     this.dataHandler = (Request request) {
       this._tryHandleData(handleData, request);
     };
   }
 
-  void onError (void handleError(error)) {
+  void onError (void handleError (error)) {
     this.errorHandler = handleError;
   }
 
-  void onDone (void handleDone()) {
+  void onDone (void handleDone ()) {
     this.doneHandler = handleDone;
   }
 
@@ -279,7 +279,7 @@ class _RouteStreamSubscription implements RouteStreamSubscription {
       this.doneHandler();
   }
 
-  void _tryHandleData (void handleData(Request request), Request request) {
+  void _tryHandleData (void handleData (Request request), Request request) {
     try {
       handleData(request);
     } catch (e) {
