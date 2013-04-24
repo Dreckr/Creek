@@ -8,7 +8,7 @@ import 'dart:io';
 
 part 'server_impl.dart';
 
-typedef void NotFoundHandler (Request request, Response response);
+typedef void NotFoundHandler (HttpRequest request, HttpResponse response);
 
 /**
  * A lightweight framework that routes HttpRequests and provides easier handling.
@@ -20,8 +20,8 @@ typedef void NotFoundHandler (Request request, Response response);
  *
  *     Creek creek = new Creek();
  *     creek
- *       ..get('/foo').listen((Request req) => req.response.send('Hello, Creek!'))
- *       ..post('/bar', (Request req, Response res) => res.send('Hello, Dartisans!'));
+ *       ..get('/foo').listen((HttpRequest req) => req.response.send('Hello, Creek!'))
+ *       ..post('/bar', (HttpRequest req, HttpResponse res) => res.send('Hello, Dartisans!'));
  *
  *     creek.bind('127.0.0.1', 7070).then((HttpServer server) => print('Creek is running!'));
  *
@@ -42,36 +42,36 @@ abstract class Creek {
       new _CreekImpl();
 
   /**
-   * Creates a new DELETE route and returns it's [RouteStream].
+   * Creates a new DELETE route and returns it's [Stream].
    *
-   * Creates a new DELETE route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+   * Creates a new DELETE route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and the subscription will be returned instead.
    */
-  delete (String path, [void handler (Request req, Response res)]);
+  delete (String path, [void handler (HttpRequest req, HttpResponse res)]);
 
   /**
-   * Creates a new GET route and returns it's [RouteStream].
+   * Creates a new GET route and returns it's [Stream].
    *
-   * Creates a new GET route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
+   * Creates a new GET route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
    */
-  get (String path, [void handler (Request req, Response res)]);
+  get (String path, [void handler (HttpRequest req, HttpResponse res)]);
 
   /**
-   * Creates a new POST route and returns it's [RouteStream].
+   * Creates a new POST route and returns it's [Stream].
    *
-   * Creates a new POST route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
-   * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
+   * Creates a new POST route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
+   * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  post (String path, [void handler (Request req, Response res)]);
+  post (String path, [void handler (HttpRequest req, HttpResponse res)]);
 
   /**
-   * Creates a new PUT route and returns it's [RouteStream].
+   * Creates a new PUT route and returns it's [Stream].
    *
-   * Creates a new PUT route and returns it's [RouteStream]. An optional handler may be passed. If this handler is passed,
-   * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
+   * Creates a new PUT route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
+   * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  put (String path, [void handler (Request req, Response res)]);
+  put (String path, [void handler (HttpRequest req, HttpResponse res)]);
 
   /**
    * Takes a request and treats it with a defined handler.

@@ -12,26 +12,26 @@ class _CreekImpl implements Creek {
 
   _CreekImpl ();
 
-  delete (String path, [void handler (Request req, Response res)]) =>
+  delete (String path, [void handler (HttpRequest req, HttpResponse res)]) =>
       this._fetchRoute(this._deleteTree, path, handler);
 
-  get (String path, [void handler (Request req, Response res)]) =>
+  get (String path, [void handler (HttpRequest req, HttpResponse res)]) =>
       this._fetchRoute(this._getTree, path, handler);
 
-  post (String path, [void handler (Request req, Response res)]) =>
+  post (String path, [void handler (HttpRequest req, HttpResponse res)]) =>
       this._fetchRoute(this._postTree, path, handler);
 
-  put (String path, [void handler (Request req, Response res)]) =>
+  put (String path, [void handler (HttpRequest req, HttpResponse res)]) =>
       this._fetchRoute(this._putTree, path, handler);
 
-  _fetchRoute (RouteNode routeTree, String path, [void handler (Request req, Response res)]) {
+  _fetchRoute (RouteNode routeTree, String path, [void handler (HttpRequest req, HttpResponse res)]) {
     List<String> routeSteps = createRouteSteps(path);
     RouteNode node = routeTree.findNode(routeSteps);
     if (node.isClosed)
       node.openStream();
 
     if (handler != null) {
-      return node.controller.stream.treat(handler);
+      return node.controller.stream.listen((request) => handler(request, request.response));
     }
 
     return node.controller.stream;
@@ -39,6 +39,7 @@ class _CreekImpl implements Creek {
 
   void route (HttpRequest httpRequest) {
     RoutingRequest routingRequest = new RoutingRequest(httpRequest);
+    HttpResponse httpResponse = httpRequest.response;
     RouteNode tree;
 
     switch (httpRequest.method) {
@@ -55,19 +56,17 @@ class _CreekImpl implements Creek {
         tree = this._putTree;
         break;
       default:
-        Response res = routingRequest.request.response;
-        res.status = HttpStatus.METHOD_NOT_ALLOWED;
-        res.close();
+        httpResponse.statusCode = HttpStatus.NOT_FOUND;
+        httpResponse.close();
         return;
     }
 
     if (!tree.routeRequest(routingRequest)) {
       if (this.notFoundHandler == null) {
-        Response res = routingRequest.request.response;
-        res.status = HttpStatus.NOT_FOUND;
-        res.close();
+        httpResponse.statusCode = HttpStatus.NOT_FOUND;
+        httpResponse.close();
       } else {
-        this.notFoundHandler(routingRequest.request, routingRequest.request.response);
+        this.notFoundHandler(httpRequest, httpResponse);
       }
     }
   }

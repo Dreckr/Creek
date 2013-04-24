@@ -7,48 +7,52 @@ import 'package:unittest/vm_config.dart';
 String address = '127.0.0.1';
 int port = 7070;
 
+void send (HttpResponse response, String message) {
+  response.write(message);
+  response.close();
+}
+
 void main() {
   useVMConfiguration();
 
   Creek creek = new Creek();
 
   creek
-    ..delete('/foo', (req, res) => res.send('Deleting success'))
-    ..get('/foo', (req, res) => res.send('Getting success'))
-    ..post('/foo', (req, res) => res.send('Posting success'))
-    ..put('/foo', (req, res) => res.send('Putting success'));
+    ..delete('/foo', (req, res) => send(res, 'Deleting success'))
+    ..get('/foo', (req, res) => send(res, 'Getting success'))
+    ..post('/foo', (req, res) => send(res, 'Posting success'))
+    ..put('/foo', (req, res) => send(res, 'Putting success'));
 
   creek
-    ..delete('/*', (req, res) => res.send('Generic delete'))
-    ..get('/*', (req, res) => res.send('Generic get'))
-    ..post('/*', (req, res) => res.send('Generic post'))
-    ..put('/*', (req, res) => res.send('Generic put'));
+    ..delete('/*', (req, res) => send(res, 'Generic delete'))
+    ..get('/*', (req, res) => send(res, 'Generic get'))
+    ..post('/*', (req, res) => send(res, 'Generic post'))
+    ..put('/*', (req, res) => send(res, 'Generic put'));
 
   creek
-    ..delete('/bar/:key', (req, res) { res.header('key', req.header('key'));  res.send('Key: ${req.header('key')}'); })
-    ..get('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}'); })
-    ..post('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}'); })
-    ..put('/bar/:key', (req, res) { res.header('key', req.header('key')); res.send('Key: ${req.header('key')}'); });
+    ..delete('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']);  send(res, 'Key: ${req.queryParameters['key']}'); })
+    ..get('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']); send(res, 'Key: ${req.queryParameters['key']}'); })
+    ..post('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']); send(res, 'Key: ${req.queryParameters['key']}'); })
+    ..put('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']); send(res, 'Key: ${req.queryParameters['key']}'); });
 
   creek
     ..get('/filtered').where((req) {
-      if (req.params['name'] == 'Creek') {
+      if (req.queryParameters['name'] == 'Creek') {
         return true;
       } else {
-        req.response.status = HttpStatus.FORBIDDEN;
+        req.response.statusCode = HttpStatus.FORBIDDEN;
         req.response.close();
         return false;
       }
-    }).listen((req) => req.response.send('Passed filter'));
+    }).listen((req) => send(req.response, 'Passed filter'));
 
   creek.notFoundHandler = (req, res) {
-    res.status = HttpStatus.NOT_FOUND;
-    res.send('Howdy, stranger!');
+    res.statusCode = HttpStatus.NOT_FOUND;
+    send(res, 'Howdy, stranger!');
   };
 
   creek.bind(address, port).then(doTests,
       onError: doTests);
-
 }
 
 void doTests (HttpServerSubscription serverSubscription) {

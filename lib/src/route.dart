@@ -39,7 +39,7 @@ abstract class RouteNode {
 
   /// Key names associated to this path.
   List<String> keysNames;
-  RouteStreamController controller;
+  StreamController<HttpRequest> controller;
 
   /// This node's step name.
   String stepName;
@@ -67,7 +67,7 @@ abstract class RouteNode {
   /**
    * Opens a new stream.
    *
-   * Creates a new [RouteStreamController] if the current is non-existent or is closed.
+   * Creates a new [StreamController] if the current is non-existent or is closed.
    */
   void openStream ();
 
@@ -96,91 +96,3 @@ class RouteNodeType {
 
   RouteNodeType._(this.value);
 }
-
-typedef void PauseStateChangeHandler ();
-typedef void SubscriptionStateChangeHandler ();
-
-/**
- * A [StreamController] specialized in dealing with requests.
- *
- * A implementation of StreamController built to guarantee proper behavior and provide more specialized functionality.
- */
-abstract class RouteStreamController implements StreamController<Request> {
-  RouteStream get stream;
-
-  factory RouteStreamController ({onPauseStateChange, onSubscriptionStateChange}) =>
-      new _RouteStreamControllerImpl(onPauseStateChange, onSubscriptionStateChange);
-}
-
-/**
- * A [EventSink] specialized in dealing with requests.
- *
- * A implementation of EventSink built to guarantee proper behavior and provide more specialized functionality.
- */
-abstract class RouteStreamSink implements EventSink<Request> {
-  RouteStream _stream;
-
-  factory RouteStreamSink (RouteStream stream) => new _RouteStreamSinkImpl(stream);
-
-}
-
-/**
- * A [Stream] specialized in dealing with requests.
- *
- * A implementation of Stream built to guarantee proper behavior and provide more specialized functionality.
- */
-abstract class RouteStream implements Stream<Request> {
-  bool get isClosed;
-  bool get isPaused;
-  bool get hasListener;
-  RouteStreamSubscription subscription;
-  PauseStateChangeHandler _pauseHandler;
-  SubscriptionStateChangeHandler _subscriptionHandler;
-
-  factory RouteStream () => new _RouteStreamImpl();
-
-  /**
-   * Creates and returns a subscription to this stream.
-   *
-   * Creates a subscription by listening to the stream. The onData handler is converted to a single parameter handler.
-   */
-  RouteStreamSubscription treat (void onData (Request request, Response response),
-                                 { void onError (error),
-                                    void onDone (),
-                                    bool cancelOnError});
-
-  void _add (Request request);
-
-  void _addError (error);
-
-  void _close ();
-
-}
-
-/**
- * A [StreamSubscription] specialized in dealing with requests.
- *
- * A implementation of StreamSubscription built to guarantee proper behavior and provide more specialized functionality.
- */
-abstract class RouteStreamSubscription extends StreamSubscription<Request> {
-  RouteStream stream;
-  bool get isPaused;
-  bool cancelOnError;
-  Function dataHandler;
-  Function doneHandler;
-  Function errorHandler;
-
-  factory RouteStreamSubscription (RouteStream stream,
-                                          void onData (Request data),
-                                      {   void onError (error),
-                                          void onDone (),
-                                          bool cancelOnError : true}) =>
-    new _RouteStreamSubscription(stream, onData, onError, onDone, cancelOnError);
-
-  void _handleData (Request request);
-
-  void _handleError (error);
-
-  void _handleDone ();
-}
-

@@ -46,11 +46,11 @@ creek
 creek.put('/bar').listen((req) => req.response.send('It is time to go to the bar'));
 ```
 
-RouteStreams and RouteStreamSubscriptions
+Streams and StreamSubscriptions
 ------------------------------------------
-With RouteStreams and RouteStreamSubscriptions, you can add some awesome sauce to your code:
+With Streams and StreamSubscriptions, you can add some awesome sauce to your code:
 ```dart
-RouteStreamSubscriptions subscription = creek.get('/filtered').where((req) {
+StreamSubscription subscription = creek.get('/filtered').where((req) {
       if (req.params['name'] == 'Creek') {
         return true;
       } else {
@@ -66,7 +66,7 @@ subscription.pause();
 
 // You can pause and resume subscriptions freely at runtime, without much trouble. This way, you can control your routes
 // while your server is stil running. 
-server.get('/resume', (req, res) { subscription.resume(); res.send('subscription resumed!'); });
+creek.get('/resume', (req, res) { subscription.resume(); res.send('subscription resumed!'); });
 ```
 
 License

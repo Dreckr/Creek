@@ -5,7 +5,7 @@ class _RouteNode implements RouteNode {
   List<RouteNode> children = [];
   //List<Middleware> middlewares = [];
   List<String> keysNames = [];
-  RouteStreamController controller;
+  StreamController<HttpRequest> controller;
   String stepName;
   bool get isClosed => controller == null || controller.isClosed;
   bool get isPaused => this.isClosed || controller.isPaused || !controller.hasListener;
@@ -49,7 +49,7 @@ class _RouteNode implements RouteNode {
     if (routingRequest.routeSteps.length == 0) {
       if (!this.isClosed && !this.isPaused) {
         this._parseKeys(routingRequest);
-        this.controller.add(routingRequest.request);
+        this.controller.add(routingRequest.httpRequest);
         return true;
       } else {
         return false;
@@ -81,14 +81,14 @@ class _RouteNode implements RouteNode {
 
   void openStream () {
     if (this.isClosed)
-      this.controller = new RouteStreamController();
+      this.controller = new StreamController<HttpRequest>();
   }
 
-  void closeStream (bool closeTree)  {
+  void closeStream (bool closeChildren)  {
     if (this.controller != null)
       this.controller.close();
 
-    if (closeTree)
+    if (closeChildren)
       for (RouteNode child in children)
         child.closeStream(true);
   }
@@ -97,211 +97,9 @@ class _RouteNode implements RouteNode {
     var i = 0;
 
     for (String key in routingRequest.keys) {
-      routingRequest.request.header(this.keysNames[i], key);
+      routingRequest.httpRequest.queryParameters[this.keysNames[i]] = key;
       i++;
     }
-  }
-
-}
-
-class _RouteStreamControllerImpl implements RouteStreamController {
-  RouteStream get stream => this.sink._stream;
-  RouteStreamSink sink;
-  bool get isClosed => sink._stream.isClosed;
-  bool get isPaused => sink._stream.isPaused;
-  bool get hasListener => sink._stream.hasListener;
-
-  _RouteStreamControllerImpl (onPauseStateChange, onSubscriptionStateChange) {
-    this.sink = new _RouteStreamSinkImpl(new _RouteStreamImpl());
-    this.sink._stream._pauseHandler = onPauseStateChange;
-    this.sink._stream._subscriptionHandler = onSubscriptionStateChange;
-  }
-
-
-  void add (Request request) {
-    this.sink.add(request);
-  }
-
-  void addError (error, [stackTrace]) {
-    this.sink.addError(error);
-  }
-
-  void close () {
-    if (!this.isClosed)
-      this.sink.close();
-  }
-
-  void signalError (error) {
-    this.sink.addError(error);
-  }
-
-}
-
-class _RouteStreamSinkImpl implements RouteStreamSink {
-  RouteStream _stream;
-
-  _RouteStreamSinkImpl (RouteStream stream) : this._stream = stream;
-
-  void add (Request request) {
-    this._stream._add(request);
-  }
-
-  void addError (error) {
-    this._stream._addError(error);
-  }
-
-  void close () {
-    this._stream._close();
-  }
-
-}
-
-class _RouteStreamImpl extends Stream<Request> implements RouteStream {
-  bool _closed = false;
-  bool get isClosed => this._closed;
-  bool get isPaused => this.subscription == null || this.subscription.isPaused;
-  bool get hasListener => this.subscription != null;
-
-  RouteStreamSubscription subscription;
-
-  // TODO Use this handlers
-  PauseStateChangeHandler _pauseHandler;
-  SubscriptionStateChangeHandler _subscriptionHandler;
-
-  RouteStreamSubscription treat (void onData (Request request, Response response),
-                                  { void onError (error),
-                                    void onDone (),
-                                    bool cancelOnError}) =>
-                                        listen((Request req) => onData(req, req.response),
-                                          onError: onError, onDone: onDone, cancelOnError: cancelOnError);
-
-  RouteStreamSubscription listen (void onData (Request request),
-                                  { void onError (error),
-                                    void onDone (),
-                                    bool cancelOnError}) {
-
-    if (this._closed)
-      throw new Exception('RouteStream is closed');
-
-    RouteStreamSubscription subscription = new RouteStreamSubscription(this, onData,
-        onError : onError, onDone : onDone, cancelOnError : cancelOnError);
-
-    this.subscription = subscription;
-
-    return subscription;
-  }
-
-  void _add (Request request) {
-    if (this.subscription != null && !this.isPaused) {
-      this.subscription._handleData(request);
-    }
-  }
-
-  void _addError (error) {
-    this.subscription._handleError(error);
-  }
-
-  void _close () {
-    this._closed = true;
-    subscription._handleDone();
-  }
-}
-
-class _RouteStreamSubscription implements RouteStreamSubscription {
-  RouteStream stream;
-  Function dataHandler;
-  Function doneHandler;
-  Function errorHandler;
-  bool cancelOnError = true;
-  int _paused = 0;
-  bool get isPaused => this._paused > 0;
-
-  _RouteStreamSubscription (this.stream, dataHandler,
-                                errorHandler, doneHandler, cancelOnError) {
-
-    if (dataHandler == null)
-      throw new Exception ('Subscription\'s onData handler is not defined');
-
-    this.onData(dataHandler);
-    this.onError(errorHandler);
-    this.onDone(doneHandler);
-
-    if (cancelOnError == null)
-      cancelOnError = true;
-
-    this.cancelOnError = cancelOnError;
-  }
-
-  void cancel () {
-    this.stream._close();
-  }
-
-  void onData (void handleData (Request request)) {
-    this.dataHandler = (Request request) {
-      this._tryHandleData(handleData, request);
-    };
-  }
-
-  void onError (void handleError (error)) {
-    this.errorHandler = handleError;
-  }
-
-  void onDone (void handleDone ()) {
-    this.doneHandler = handleDone;
-  }
-
-
-
-  pause ([Future resumeSignal]) {
-    this._paused++;
-
-    if (resumeSignal != null)
-      resumeSignal.then((data) {
-        this.resume();
-      });
-  }
-
-  void resume () {
-    this._paused--;
-  }
-
-  void _handleData (Request request) {
-    this.dataHandler(request);
-  }
-
-  void _handleError (error) {
-    if (this.errorHandler != null)
-      this.errorHandler(error);
-  }
-
-  void _handleDone () {
-    if (this.doneHandler != null)
-      this.doneHandler();
-  }
-
-  void _tryHandleData (void handleData (Request request), Request request) {
-    try {
-      handleData(request);
-    } catch (e) {
-      if (this.errorHandler != null) {
-        this.errorHandler(e);
-      } else {
-        Response res = request.response;
-        res.status = HttpStatus.INTERNAL_SERVER_ERROR;
-        res.close();
-      }
-
-      if (this.cancelOnError == true)
-        this.cancel();
-    }
-  }
-
-  Future asFuture ([futureValue]) {
-    Completer completer = new Completer();
-    this.onDone(() => completer.complete(futureValue));
-    this.onError((error) => completer.completeError(error));
-
-    return completer.future;
   }
 
 }
