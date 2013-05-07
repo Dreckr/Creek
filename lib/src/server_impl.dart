@@ -76,7 +76,7 @@ class _CreekImpl implements Creek {
     if (serverOrAddress is HttpServer) {
       completer.complete(this._bind(serverOrAddress));
     } else {
-      HttpServer.bind(serverOrAddress, port, backlog).then(
+      HttpServer.bind(serverOrAddress, port, backlog: backlog).then(
           (HttpServer server) => completer.complete(this._bind(server)),
           onError: (error) => completer.completeError(error)
       );

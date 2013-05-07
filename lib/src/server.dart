@@ -11,7 +11,7 @@ part 'server_impl.dart';
 typedef void NotFoundHandler (HttpRequest request, HttpResponse response);
 
 /**
- * A lightweight framework that routes HttpRequests and provides easier handling.
+ * A lightweight framework that routes [HttpRequest]s and provides easier handling.
  *
  * This framework allows you to specify routes and handlers before a server is even created. All the
  * routes are stored to be used later, when the server is binded.
@@ -26,7 +26,7 @@ typedef void NotFoundHandler (HttpRequest request, HttpResponse response);
  *     creek.bind('127.0.0.1', 7070).then((HttpServer server) => print('Creek is running!'));
  *
  * In this case, an address and a port is passed to the bind() method, so Creek will create its own HttpServer and
- * will subscribe to it. If an existing HttpServer was passed to this method, Creek would listen on it.
+ * will subscribe to it. If an existing [HttpServer] was passed to this method, Creek would listen on it.
  *
  * It is possible to bind the same Creek to several servers by simply calling bind() multiple time with different
  * arguments.
@@ -53,7 +53,7 @@ abstract class Creek {
    * Creates a new GET route and returns it's [Stream].
    *
    * Creates a new GET route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
-   * it will be used to listen to the stream and a [RouteStreamSubscription] will be returned instead.
+   * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
   get (String path, [void handler (HttpRequest req, HttpResponse res)]);
 
@@ -88,14 +88,14 @@ abstract class Creek {
   void onDone (void onDoneHandler ());
 
   /**
-   * Closes all HttpServers subscriptions and closes all routes.
+   * Closes all [HttpServer]s subscriptions and closes all routes.
    */
   close ();
 
 }
 
 /**
- * A StreamSubscription wrapper that keeps a reference to the server.
+ * A [StreamSubscription] wrapper that keeps a reference to the server.
  */
 class HttpServerSubscription implements StreamSubscription<HttpRequest> {
   StreamSubscription<HttpRequest> _subscription;
