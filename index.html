@@ -1,43 +1,137 @@
-        <!DOCTYPE html>
-        <html>
-        <head>
-                <meta charset="utf-8">
-        <title>Dart Documentation / Dart Documentation</title>
-        <link rel="stylesheet" type="text/css"
-            href="styles.css">
-        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
-        <link rel="shortcut icon" href="favicon.ico">
-        
-        </head>
-        <body>
-        <div class="page">
-        <div class="header">
-          <a href="index.html"><div class="logo"></div></a>
-          <a href="index.html">Dart Documentation</a>
-                <div id="search-box">
-          <input type="search" name="q" id="q" autocomplete="off"
-              class="search-input" placeholder="Search API">
-        </div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Creek by Dreckr</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Creek</h1>
+          <h2>A simple web development framework with Sinatra looks and Dart power.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/Dreckr/Creek/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/Dreckr/Creek/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/Dreckr/Creek" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>Creek</h1>
+
+<p><a href="https://drone.io/github.com/Dreckr/Creek/latest"><img src="https://drone.io/github.com/Dreckr/Creek/status.png" alt="Build Status"></a></p>
+
+<p>A simple web development framework with Sinatra looks and Dart power.</p>
+
+<p>Creek is a web development framework that let's you feel at home while you take advantage of Dart. It does
+things a little different than most Sinatra-inspired frameworks by using a routing tree (instead of a set of RegExp
+matchers) and Streams API.</p>
+
+<p>A routing tree is a tree with all the accessible URL paths of a server. This tree allows the framework to be lighting 
+fast while finding the right handler of a HTTP request. Also, it stores some metadata about your routes that might
+come in handy. For example, when close a route (e.g., "/foo"), you might want to close all it's child routes (e.g., 
+"/foo/bar", "/foo/barz", "/foo/bar/qux") and Creek can do exactly that.</p>
+
+<p>With the use of the Streams API, you get full control of your request flow. You can filter requests by calling 
+Stream.where, redirect requests internally to another consumer with Stream.pipe, modify request in some manner using
+a StreamTransformer, pause your handler from receiving request through StreamSubscription.pause... If Dart's HttpServer 
+is a Stream, your framework should work accordingly to give as much power as possible.</p>
+
+<h2>Usage</h2>
+
+<p>Running a Creek server is really straight forward:</p>
+
+<div class="highlight"><pre><span class="n">Creek</span> <span class="n">creek</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Creek</span><span class="p">();</span>
+<span class="n">creek</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">,</span> <span class="m">7070</span><span class="p">);</span>
+
+<span class="c1">//Or</span>
+<span class="n">HttpServer</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">,</span> <span class="m">7071</span><span class="p">).</span><span class="n">then</span><span class="p">((</span><span class="n">server</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">creek</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="n">server</span><span class="p">));</span>
+</pre></div>
+
+<p>When a Creek is instanciated, it can be used to create all routes right away. A HttpServer is not created though, 
+so you have to tell Creek to bind to an address or a HttpServer. The bind() method returns a Future, which will gives
+you a HttpServer server when complete.</p>
+
+<h2>Routes</h2>
+
+<p>Creating routes is easy:</p>
+
+<div class="highlight"><pre><span class="n">creek</span>
+    <span class="p">..</span><span class="kd">get</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">res</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s1">'Hello, Dartisans!'</span><span class="p">))</span>
+    <span class="p">..</span><span class="n">post</span><span class="p">(</span><span class="s1">'/foo'</span><span class="p">,</span> <span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">res</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s1">'It is so easy, it got boring already... or maybe not!'</span><span class="p">));</span>
+
+<span class="c1">// Alternatively, you can do this</span>
+<span class="n">creek</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="s1">'/bar'</span><span class="p">).</span><span class="n">listen</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">req</span><span class="p">.</span><span class="n">response</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s1">'It is time to go to the bar'</span><span class="p">));</span>
+</pre></div>
+
+<h2>Streams and StreamSubscriptions</h2>
+
+<p>With Streams and StreamSubscriptions, you can add some awesome sauce to your code:</p>
+
+<div class="highlight"><pre><span class="n">StreamSubscription</span> <span class="n">subscription</span> <span class="o">=</span> <span class="n">creek</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'/filtered'</span><span class="p">).</span><span class="n">where</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Creek'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// Remember to treat rejected requests so they won't stay alive waiting for a response... forever...</span>
+        <span class="n">req</span><span class="p">.</span><span class="n">response</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="p">.</span><span class="n">FORBIDDEN</span><span class="p">;</span>
+        <span class="n">req</span><span class="p">.</span><span class="n">response</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}).</span><span class="n">listen</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">req</span><span class="p">.</span><span class="n">response</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s1">'Filtered!'</span><span class="p">));</span>
+
+<span class="c1">// When paused, no request will be passed to this subscription.</span>
+<span class="n">subscription</span><span class="p">.</span><span class="n">pause</span><span class="p">();</span>
+
+<span class="c1">// You can pause and resume subscriptions freely at runtime, without much trouble. This way, you can control your routes</span>
+<span class="c1">// while your server is stil running. </span>
+<span class="n">creek</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'/resume'</span><span class="p">,</span> <span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span> <span class="n">subscription</span><span class="p">.</span><span class="n">resume</span><span class="p">();</span> <span class="n">res</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s1">'subscription resumed!'</span><span class="p">);</span> <span class="p">});</span>
+</pre></div>
+
+<h2>License</h2>
+
+<p>Copyright (c) 2013 Diego Rocha <a href="mailto:diego.rocha.comp@gmail.com">diego.rocha.comp@gmail.com</a></p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+        </section>
+
+        <footer>
+          Creek is maintained by <a href="https://github.com/Dreckr">Dreckr</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
         
       </div>
-      <div class="drop-down" id="drop-down"></div>
-      
-        <div class="nav">
-        
-<h2><div class="icon-library"></div><a href="request.html">request</a></h2><h2><div class="icon-library"></div><a href="route.html">route</a></h2><h2><div class="icon-library"></div><a href="server.html">server</a></h2><h2><div class="icon-library"></div><a href="utils.html">utils</a></h2></div>
-<div class="content">
-<h2>Dart Documentation</h2>
-<h3>Libraries</h3>
-<h4><a href="request.html">request</a></h4>
-<h4><a href="route.html">route</a></h4>
-<h4><a href="server.html">server</a></h4>
-<h4><a href="utils.html">utils</a></h4>
-        </div>
-        <div class="clear"></div>
-        </div>
-        <div class="footer">
-          <div>This page was generated at 2013-04-16 17:27:48.533</div>
-        </div>
-        <script async src="client-static.js"></script>
-        </body></html>
-        
+    </div>
+  </body>
+</html>
