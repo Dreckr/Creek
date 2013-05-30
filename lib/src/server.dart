@@ -100,6 +100,8 @@ abstract class Creek {
 class HttpServerSubscription implements StreamSubscription<HttpRequest> {
   StreamSubscription<HttpRequest> _subscription;
   HttpServer server;
+  
+  bool get isPaused => this._subscription.isPaused;
 
   HttpServerSubscription._(this._subscription, this.server);
 
@@ -114,7 +116,7 @@ class HttpServerSubscription implements StreamSubscription<HttpRequest> {
   void pause([resumeSignal]) => this._subscription.pause(resumeSignal);
 
   void resume() => this._subscription.resume();
-
+  
   Future asFuture([futureValue]) => this._subscription.asFuture(futureValue);
 }
 
