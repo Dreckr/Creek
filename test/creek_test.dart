@@ -40,9 +40,9 @@ void main() {
       }
     }).listen((request) => send(request.response, 'Passed filter'));
 
-  creek.notFoundHandler = (req, res) {
-    res.statusCode = HttpStatus.NOT_FOUND;
-    send(res, 'Howdy, stranger!');
+  creek.notFoundHandler = (request) {
+    request.response.statusCode = HttpStatus.NOT_FOUND;
+    send(request.response, 'Howdy, stranger!');
   };
 
   creek.bind(address, port).then(doTests,

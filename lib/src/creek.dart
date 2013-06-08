@@ -1,13 +1,12 @@
 library server;
 
 import 'route.dart';
-import 'request.dart';
 import 'dart:async';
 import 'dart:io';
 
 part 'creek_impl.dart';
 
-typedef void NotFoundHandler (HttpRequest request, HttpResponse response);
+typedef void NotFoundHandler (HttpRequest request);
 
 /**
  * A lightweight framework that routes [HttpRequest]s and provides easier handling.
@@ -38,7 +37,7 @@ abstract class Creek {
   List<HttpServerSubscription> serverSubscriptions;
 
   factory Creek () =>
-      new _CreekImpl();
+      new _Creek();
 
   /**
    * Creates a new DELETE route and returns it's [Stream].
@@ -46,7 +45,7 @@ abstract class Creek {
    * Creates a new DELETE route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and the subscription will be returned instead.
    */
-  Stream delete (String path);
+  Stream delete (path);
 
   /**
    * Creates a new GET route and returns it's [Stream].
@@ -54,7 +53,7 @@ abstract class Creek {
    * Creates a new GET route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  Stream get (String path);
+  Stream get (path);
 
   /**
    * Creates a new POST route and returns it's [Stream].
@@ -62,7 +61,7 @@ abstract class Creek {
    * Creates a new POST route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  Stream post (String path);
+  Stream post (path);
 
   /**
    * Creates a new PUT route and returns it's [Stream].
@@ -70,7 +69,7 @@ abstract class Creek {
    * Creates a new PUT route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  Stream put (String path);
+  Stream put (path);
 
   /**
    * Takes a request and treats it with a defined handler.

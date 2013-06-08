@@ -1,10 +1,10 @@
 part of route;
 
-class _RouteNode implements RouteNode {
-  RouteNodeType _type;
-  RouteNodeType get type => this._type;
-  List<_RouteNode> _children = [];
-  List<RouteNode> get children => this._children;
+class _Route implements Route {
+  RouteType _type;
+  RouteType get type => this._type;
+  List<_Route> _children = [];
+  List<Route> get children => this._children;
   StreamController _controller;
   StreamController get controller => this._controller;
   bool get isClosed => controller == null || controller.isClosed;
@@ -12,13 +12,13 @@ class _RouteNode implements RouteNode {
   Uri _uri;
   Uri get uri => this._uri;
 
-  _RouteNode (this._type, this._uri);
+  _Route (this._type, this._uri);
 
-  RouteNode findNode (Uri uri) {
-    return this._findNode(uri);
+  Route findRoute (Uri uri) {
+    return this._findRoute(uri);
   }
   
-  RouteNode _findNode (Uri uri, [segmentIndex = 1]) {
+  Route _findRoute (Uri uri, [segmentIndex = 1]) {
     var pathSegments = uri.pathSegments;
     
     if (pathSegments.length == segmentIndex) {
@@ -29,19 +29,19 @@ class _RouteNode implements RouteNode {
     var routeType;
 
     if (segment.startsWith('*') ||segment.startsWith(':')) {
-      routeType = RouteNodeType.GENERIC;
+      routeType = RouteType.GENERIC;
     } else {
-      routeType = RouteNodeType.STRICT;
+      routeType = RouteType.STRICT;
     }
 
     for (var child in this._children)
-      if ((routeType == RouteNodeType.STRICT && child.uri.pathSegments.last == segment) ||
-          (child.type == routeType && routeType != RouteNodeType.STRICT))
-        return child._findNode(uri, segmentIndex + 1);
+      if ((routeType == RouteType.STRICT && child.uri.pathSegments.last == segment) ||
+          (child.type == routeType && routeType != RouteType.STRICT))
+        return child._findRoute(uri, segmentIndex + 1);
 
-    var childNode = new _RouteNode(routeType, copyUri(uri, untilPathSegment: segment));
+    var childNode = new _Route(routeType, copyUri(uri, untilPathSegment: segment));
     this.children.add(childNode);
-    return childNode._findNode(uri, segmentIndex + 1);
+    return childNode._findRoute(uri, segmentIndex + 1);
   }
 
   bool routeRequest (HttpRequest httpRequest) {
@@ -63,7 +63,7 @@ class _RouteNode implements RouteNode {
     for (var child in this.children) {
       if (child.uri.pathSegments.last == segment) {
         strictChild = child;
-      } else if (child.type == RouteNodeType.GENERIC && strictChild == null) {
+      } else if (child.type == RouteType.GENERIC && strictChild == null) {
         genericChild = child;
       }
     }
@@ -88,7 +88,7 @@ class _RouteNode implements RouteNode {
       this._controller.close();
 
     if (closeChildren)
-      for (RouteNode child in children)
+      for (Route child in children)
         child.closeStream(true);
   }
 

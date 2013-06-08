@@ -1,32 +1,40 @@
 part of server;
 
-class _CreekImpl implements Creek {
-  RouteNode _deleteTree = new RouteNode(RouteNodeType.STRICT, Uri.parse(''));
-  RouteNode _getTree = new RouteNode(RouteNodeType.STRICT, Uri.parse(''));
-  RouteNode _postTree = new RouteNode(RouteNodeType.STRICT, Uri.parse(''));
-  RouteNode _putTree = new RouteNode(RouteNodeType.STRICT, Uri.parse(''));
+class _Creek implements Creek {
+  Route _deleteTree = new Route(RouteType.STRICT, new Uri());
+  Route _getTree = new Route(RouteType.STRICT, new Uri());
+  Route _postTree = new Route(RouteType.STRICT, new Uri());
+  Route _putTree = new Route(RouteType.STRICT, new Uri());
   NotFoundHandler notFoundHandler;
   List<HttpServerSubscription> serverSubscriptions = [];
   var _onErrorHandler;
   var _onDoneHandler;
 
-  _CreekImpl ();
+  _Creek ();
 
-  delete (String path) =>
+  delete (path) =>
       this._fetchRoute(this._deleteTree, path);
 
-  get (String path) =>
+  get (path) =>
       this._fetchRoute(this._getTree, path);
 
-  post (String path) =>
+  post (path) =>
       this._fetchRoute(this._postTree, path);
 
-  put (String path) =>
+  put (path) =>
       this._fetchRoute(this._putTree, path);
 
-  Stream _fetchRoute (RouteNode routeTree, String path) {
-    Uri uri = Uri.parse(path);
-    RouteNode node = routeTree.findNode(uri);
+  Stream _fetchRoute (Route routeTree, path) {
+    var uri;
+    
+    if (path is Uri)
+      uri = path;
+    else if (path is String)
+      uri = Uri.parse(path);
+    else
+      throw new Exception('$path is of type ${path.runtimeType} when String or Uri were expected');
+    
+    Route node = routeTree.findRoute(uri);
     if (node.isClosed)
       node.openStream();
 
@@ -35,7 +43,7 @@ class _CreekImpl implements Creek {
 
   void route (HttpRequest httpRequest) {
     HttpResponse httpResponse = httpRequest.response;
-    RouteNode tree;
+    Route tree;
 
     switch (httpRequest.method) {
       case 'DELETE':
@@ -61,7 +69,7 @@ class _CreekImpl implements Creek {
         httpResponse.statusCode = HttpStatus.NOT_FOUND;
         httpResponse.close();
       } else {
-        this.notFoundHandler(httpRequest, httpResponse);
+        this.notFoundHandler(httpRequest);
       }
     }
   }

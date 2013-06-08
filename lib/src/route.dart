@@ -3,7 +3,6 @@ library route;
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
-import 'request.dart';
 import 'utils.dart';
 
 part 'route_impl.dart';
@@ -23,7 +22,7 @@ part 'route_impl.dart';
  * When the server receives a request for a path, it finds is node and if the node's stream has a subscriber, it is
  * feeded with the request. If not, the request is treated with the server's "not found" handler.
  */
-abstract class RouteNode {
+abstract class Route {
 
   /**
    * The type of this node's step.
@@ -32,10 +31,10 @@ abstract class RouteNode {
    * (the paths are matched step by step). A generic node matches anything to its step. Key nodes also match anything to
    * its step, but is also stores the value matched so it can be used by the request handler.
    */
-  RouteNodeType get type;
+  RouteType get type;
 
   /// This node's children
-  List<RouteNode> get children;
+  List<Route> get children;
 
   StreamController get controller;
 
@@ -43,8 +42,8 @@ abstract class RouteNode {
   
   Uri get uri;
 
-  factory RouteNode (RouteNodeType type, Uri uri) =>
-      new _RouteNode(type, uri);
+  factory Route (RouteType type, Uri uri) =>
+      new _Route(type, uri);
 
   /**
    * Returns the node identified by the routeSteps.
@@ -52,7 +51,7 @@ abstract class RouteNode {
    * Searches the tree that has this node as root until it finds the node identified by this steps. If it doesn't find
    * a node identified by this steps, all node necessary to reach it are created.
    */
-  RouteNode findNode (Uri uri);
+  Route findRoute (Uri uri);
 
   /**
    * Passes the request to the appropriate stream and returns true if succeded.
@@ -85,11 +84,11 @@ abstract class RouteNode {
  * A [RouteNode] may be strict, key or generic. This enum-like class helps guaranties that every [RouteNode] is always
  * one of these.
  */
-class RouteNodeType {
-  static final RouteNodeType STRICT = new RouteNodeType._(0);
-  static final RouteNodeType GENERIC = new RouteNodeType._(1);
+class RouteType {
+  static final RouteType STRICT = new RouteType._(0);
+  static final RouteType GENERIC = new RouteType._(1);
 
   int value;
 
-  RouteNodeType._(this.value);
+  RouteType._(this.value);
 }
