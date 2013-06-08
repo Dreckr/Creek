@@ -4,7 +4,7 @@ class _RouteNode implements RouteNode {
   RouteNodeType _type;
   RouteNodeType get type => this._type;
   List<_RouteNode> _children = [];
-  List<RouteNode> get children => this._controller;
+  List<RouteNode> get children => this._children;
   StreamController _controller;
   StreamController get controller => this._controller;
   bool get isClosed => controller == null || controller.isClosed;
@@ -34,7 +34,7 @@ class _RouteNode implements RouteNode {
       routeType = RouteNodeType.STRICT;
     }
 
-    for (var child in this.children)
+    for (var child in this._children)
       if ((routeType == RouteNodeType.STRICT && child.uri.pathSegments.last == segment) ||
           (child.type == routeType && routeType != RouteNodeType.STRICT))
         return child._findNode(uri, segmentIndex + 1);
