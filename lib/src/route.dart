@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'request.dart';
+import 'utils.dart';
 
 part 'route_impl.dart';
 
@@ -31,22 +32,19 @@ abstract class RouteNode {
    * (the paths are matched step by step). A generic node matches anything to its step. Key nodes also match anything to
    * its step, but is also stores the value matched so it can be used by the request handler.
    */
-  RouteNodeType type;
+  RouteNodeType get type;
 
   /// This node's children
-  List<RouteNode> children;
-  //List<Middleware> middlewares;
+  List<RouteNode> get children;
 
-  /// Key names associated to this path.
-  List<String> keysNames;
-  StreamController<HttpRequest> controller;
+  StreamController get controller;
 
-  /// This node's step name.
-  String stepName;
   bool get isClosed;
+  
+  Uri get uri;
 
-  factory RouteNode (RouteNodeType type, String route) =>
-      new _RouteNode(type, route);
+  factory RouteNode (RouteNodeType type, Uri uri) =>
+      new _RouteNode(type, uri);
 
   /**
    * Returns the node identified by the routeSteps.
@@ -54,7 +52,7 @@ abstract class RouteNode {
    * Searches the tree that has this node as root until it finds the node identified by this steps. If it doesn't find
    * a node identified by this steps, all node necessary to reach it are created.
    */
-  RouteNode findNode (List<String> routeSteps, [List<String> keysNames]);
+  RouteNode findNode (Uri uri);
 
   /**
    * Passes the request to the appropriate stream and returns true if succeded.
@@ -62,7 +60,7 @@ abstract class RouteNode {
    * Searches the tree that has this node as root to find the node matching the request. If it is found and it's stream
    * has a subscriber, the stream is feeded with the request, returning true. If not, returns false.
    */
-  bool routeRequest (RoutingRequest routingRequest);
+  bool routeRequest (HttpRequest httpRequest);
 
   /**
    * Opens a new stream.
@@ -75,9 +73,9 @@ abstract class RouteNode {
   /**
    * Closes the stream.
    *
-   * Closes streamController and, if [closeTree] is true, also closes all of its descendent's streams.
+   * Closes streamController and, if [closeChildren] is true, also closes all of its descendent's streams.
    */
-  void closeStream (bool closeTree);
+  void closeStream (bool closeChildren);
 
 }
 
@@ -89,8 +87,7 @@ abstract class RouteNode {
  */
 class RouteNodeType {
   static final RouteNodeType STRICT = new RouteNodeType._(0);
-  static final RouteNodeType KEY = new RouteNodeType._(1);
-  static final RouteNodeType GENERIC = new RouteNodeType._(2);
+  static final RouteNodeType GENERIC = new RouteNodeType._(1);
 
   int value;
 

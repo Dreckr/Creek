@@ -1,105 +1,95 @@
 part of route;
 
 class _RouteNode implements RouteNode {
-  RouteNodeType type;
-  List<RouteNode> children = [];
-  //List<Middleware> middlewares = [];
-  List<String> keysNames = [];
-  StreamController<HttpRequest> controller;
-  String stepName;
+  RouteNodeType _type;
+  RouteNodeType get type => this._type;
+  List<_RouteNode> _children = [];
+  List<RouteNode> get children => this._controller;
+  StreamController _controller;
+  StreamController get controller => this._controller;
   bool get isClosed => controller == null || controller.isClosed;
   bool get isPaused => this.isClosed || controller.isPaused || !controller.hasListener;
+  Uri _uri;
+  Uri get uri => this._uri;
 
-  _RouteNode (this.type, this.stepName);
+  _RouteNode (this._type, this._uri);
 
-  RouteNode findNode (List<String> routeSteps, [List<String> keysNames]) {
-    if (keysNames == null)
-      keysNames = [];
-    else
-      keysNames = new List.from(keysNames);
-    if (routeSteps.length == 0) {
-      this.keysNames = keysNames;
+  RouteNode findNode (Uri uri) {
+    return this._findNode(uri);
+  }
+  
+  RouteNode _findNode (Uri uri, [segmentIndex = 1]) {
+    var pathSegments = uri.pathSegments;
+    
+    if (pathSegments.length == segmentIndex) {
       return this;
     }
 
-    String step = routeSteps.removeAt(0);
-    RouteNodeType routeType;
+    var segment = pathSegments[segmentIndex];
+    var routeType;
 
-    if (step.startsWith('*')) {
+    if (segment.startsWith('*') ||segment.startsWith(':')) {
       routeType = RouteNodeType.GENERIC;
-    } else if (step.startsWith(':')) {
-      routeType = RouteNodeType.KEY;
-      step = step.substring(1);
-      keysNames.add(step);
     } else {
       routeType = RouteNodeType.STRICT;
     }
 
     for (var child in this.children)
-      if ((routeType == RouteNodeType.STRICT && child.stepName == step) ||
+      if ((routeType == RouteNodeType.STRICT && child.uri.pathSegments.last == segment) ||
           (child.type == routeType && routeType != RouteNodeType.STRICT))
-        return child.findNode(routeSteps, keysNames);
+        return child._findNode(uri, segmentIndex + 1);
 
-    var childNode = new RouteNode(routeType, step);
+    var childNode = new _RouteNode(routeType, copyUri(uri, untilPathSegment: segment));
     this.children.add(childNode);
-    return childNode.findNode(routeSteps, keysNames);
+    return childNode._findNode(uri, segmentIndex + 1);
   }
 
-  bool routeRequest (RoutingRequest routingRequest) {
-    if (routingRequest.routeSteps.length == 0) {
+  bool routeRequest (HttpRequest httpRequest) {
+    return this._routeRequest(httpRequest);    
+  }
+  
+  bool _routeRequest (HttpRequest httpRequest, [segmentIndex = 1]) {
+    if (httpRequest.uri.pathSegments.length == segmentIndex) {
       if (!this.isClosed && !this.isPaused) {
-        this._parseKeys(routingRequest);
-        this.controller.add(routingRequest.httpRequest);
+        this.controller.add(httpRequest);
         return true;
       } else {
         return false;
       }
     }
 
-    String step = routingRequest.routeSteps.removeAt(0);
-    RouteNode strictChild, genericChild;
+    var segment = httpRequest.uri.pathSegments[segmentIndex];
+    var strictChild, genericChild;
     for (var child in this.children) {
-      if (child.stepName == step) {
+      if (child.uri.pathSegments.last == segment) {
         strictChild = child;
-      } else if (child.type == RouteNodeType.KEY) {
-        routingRequest.keys.add(step);
-        genericChild = child;
       } else if (child.type == RouteNodeType.GENERIC && strictChild == null) {
         genericChild = child;
       }
     }
 
     if (strictChild != null)
-      if(strictChild.routeRequest(routingRequest))
+      if(strictChild._routeRequest(httpRequest, segmentIndex + 1))
         return true;
 
     if (genericChild != null)
-      return genericChild.routeRequest(routingRequest);
+      return genericChild._routeRequest(httpRequest, segmentIndex + 1);
 
     return false;
   }
 
   void openStream () {
     if (this.isClosed)
-      this.controller = new StreamController<HttpRequest>();
+      this._controller = new StreamController<HttpRequest>();
   }
 
   void closeStream (bool closeChildren)  {
-    if (this.controller != null)
-      this.controller.close();
+    if (this._controller != null)
+      this._controller.close();
 
     if (closeChildren)
       for (RouteNode child in children)
         child.closeStream(true);
-  }
-
-  void _parseKeys (RoutingRequest routingRequest) {
-    var i = 0;
-
-    for (String key in routingRequest.keys) {
-      routingRequest.httpRequest.queryParameters[this.keysNames[i]] = key;
-      i++;
-    }
   }
 
 }

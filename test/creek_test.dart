@@ -18,33 +18,27 @@ void main() {
   Creek creek = new Creek();
 
   creek
-    ..delete('/foo', (req, res) => send(res, 'Deleting success'))
-    ..get('/foo', (req, res) => send(res, 'Getting success'))
-    ..post('/foo', (req, res) => send(res, 'Posting success'))
-    ..put('/foo', (req, res) => send(res, 'Putting success'));
+    ..delete('/foo').listen((request) => send(request.response, 'Deleting success'))
+    ..get('/foo').listen((request) => send(request.response, 'Getting success'))
+    ..post('/foo').listen((request) => send(request.response, 'Posting success'))
+    ..put('/foo').listen((request) => send(request.response, 'Putting success'));
 
   creek
-    ..delete('/*', (req, res) => send(res, 'Generic delete'))
-    ..get('/*', (req, res) => send(res, 'Generic get'))
-    ..post('/*', (req, res) => send(res, 'Generic post'))
-    ..put('/*', (req, res) => send(res, 'Generic put'));
+    ..delete('/*').listen((request) => send(request.response, 'Generic delete'))
+    ..get('/*').listen((request) => send(request.response, 'Generic get'))
+    ..post('/*').listen((request) => send(request.response, 'Generic post'))
+    ..put('/*').listen((request) => send(request.response, 'Generic put'));
 
   creek
-    ..delete('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']);  send(res, 'Key: ${req.queryParameters['key']}'); })
-    ..get('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']); send(res, 'Key: ${req.queryParameters['key']}'); })
-    ..post('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']); send(res, 'Key: ${req.queryParameters['key']}'); })
-    ..put('/bar/:key', (req, res) { res.headers.set('key', req.queryParameters['key']); send(res, 'Key: ${req.queryParameters['key']}'); });
-
-  creek
-    ..get('/filtered').where((req) {
-      if (req.queryParameters['name'] == 'Creek') {
+    ..get('/filtered').where((request) {
+      if (request.uri.queryParameters['name'] == 'Creek') {
         return true;
       } else {
-        req.response.statusCode = HttpStatus.FORBIDDEN;
-        req.response.close();
+        request.response.statusCode = HttpStatus.FORBIDDEN;
+        request.response.close();
         return false;
       }
-    }).listen((req) => send(req.response, 'Passed filter'));
+    }).listen((request) => send(request.response, 'Passed filter'));
 
   creek.notFoundHandler = (req, res) {
     res.statusCode = HttpStatus.NOT_FOUND;
@@ -132,46 +126,6 @@ void doTests (HttpServerSubscription serverSubscription) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic put')));
-        }));
-      }));
-    });
-
-    test('key delete route', () {
-      client.open('DELETE', address, port, '/bar/test').then(expectAsync1((req) {
-        req.close().then(expectAsync1((res) {
-          expect(res.statusCode, equals(HttpStatus.OK));
-          expect(res.headers['key'].contains('test'), isTrue);
-          res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
-        }));
-      }));
-    });
-
-    test('key get route', () {
-      client.open('GET', address, port, '/bar/test').then(expectAsync1((req) {
-        req.close().then(expectAsync1((res) {
-          expect(res.statusCode, equals(HttpStatus.OK));
-          expect(res.headers['key'].contains('test'), isTrue);
-          res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
-        }));
-      }));
-    });
-
-    test('key post route', () {
-      client.open('POST', address, port, '/bar/test').then(expectAsync1((req) {
-        req.close().then(expectAsync1((res) {
-          expect(res.statusCode, equals(HttpStatus.OK));
-          expect(res.headers['key'].contains('test'), isTrue);
-          res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
-        }));
-      }));
-    });
-
-    test('key put route', () {
-      client.open('PUT', address, port, '/bar/test').then(expectAsync1((req) {
-        req.close().then(expectAsync1((res) {
-          expect(res.statusCode, equals(HttpStatus.OK));
-          expect(res.headers['key'].contains('test'), isTrue);
-          res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Key: test')));
         }));
       }));
     });
