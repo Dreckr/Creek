@@ -47,7 +47,7 @@ abstract class Router {
  * When the server receives a request for a path, it finds is node and if the node's stream has a subscriber, it is
  * feeded with the request. If not, the request is treated with the server's "not found" handler.
  */
-abstract class Route {
+abstract class Route implements Stream, EventSink {
   
   Creek creek;
 
@@ -62,32 +62,11 @@ abstract class Route {
 
   /// This node's children
   List<Route> get children;
-
-  StreamController get controller;
-  
-  Stream get stream;
-
-  bool get isClosed;
   
   Uri get uri;
 
   factory Route (Creek creek, RouteType type, Uri uri) =>
       new _Route(creek, type, uri);
-
-  /**
-   * Opens a new stream.
-   *
-   * Creates a new [StreamController] if the current is non-existent or is closed.
-   */
-  void openStream ();
-
-
-  /**
-   * Closes the stream.
-   *
-   * Closes streamController and, if [closeChildren] is true, also closes all of its descendent's streams.
-   */
-  void closeStream (bool closeChildren);
 
 }
 

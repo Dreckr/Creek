@@ -80,7 +80,7 @@ class _Router implements Router {
     }
     
     if (!route.isClosed && !route.isPaused) {
-      route.controller.add(httpRequest);
+      route.add(httpRequest);
       return true;
     } else {
       return false;
@@ -88,46 +88,52 @@ class _Router implements Router {
   }
 }
 
-class _Route implements Route {
+class _Route extends Stream implements Route {
   Creek creek;
   RouteType _type;
   RouteType get type => this._type;
   List<_Route> _children = [];
   List<Route> get children => this._children;
   StreamController _controller;
-  StreamController get controller => this._controller;
-  Stream get stream => this._controller.stream;
-  bool get isClosed => controller == null || controller.isClosed;
-  bool get isPaused => this.isClosed || controller.isPaused || !controller.hasListener;
+  Stream _stream;
+  bool get isClosed => this._controller == null || this._controller.isClosed;
+  bool get isPaused => this.isClosed || this._controller.isPaused || !this._controller.hasListener;
   Uri _uri;
   Uri get uri => this._uri;
 
-  _Route (this.creek, this._type, this._uri);
+  _Route (this.creek, this._type, this._uri) {
+    this._controller = new StreamController<HttpRequest>();
+    this._stream = this._controller.stream;
+  }
   
-//  void use (StreamTransformer streamTransformer) {
-//    if (streamTransformer is CreekTransformer) {
-//      Stream<TransformationContext> transformationStream = this.stream.transform(
-//          new StreamTransformer<dynamic, TransformationContext>(
-//            handleData: 
-//              (request, eventSink) => 
-//                eventSink.add(new TransformationContext(this.creek, this, request))));
-//      
-//      transformationStream.transform(streamTransformer);
-//    }
-//  }
-
-  void openStream () {
-    if (this.isClosed)
-      this._controller = new StreamController<HttpRequest>();
+  void add (event) => this._controller.add(event);
+  
+  void addError (errorEvent) => this._controller.addError(errorEvent);
+  
+  StreamSubscription listen(void onData(value),
+      { void onError(error),
+        void onDone(),
+        bool cancelOnError }) {
+    return this._stream.listen(onData, onError: onError, onDone: onDone,
+                          cancelOnError: cancelOnError);
+  }
+  
+  Stream transform (StreamTransformer streamTransformer) {
+    if (streamTransformer is CreekContextTransformer) {
+      this._stream = streamTransformer.bind(this._stream.transform(new ContextHandler(this.creek, this)));
+    } else {
+      this._stream = streamTransformer.bind(this._stream);
+    }
+    
+    return this;
   }
 
-  void closeStream (bool closeChildren)  {
+  void close ()  {
     if (this._controller != null)
       this._controller.close();
 
-    if (closeChildren)
-      for (Route child in children)
-        child.closeStream(true);
+    for (Route child in children)
+      child.close();
   }
 
 }

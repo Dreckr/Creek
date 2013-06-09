@@ -20,19 +20,19 @@ class _Creek implements Creek {
     this._putRouter = new Router(this);
   }
 
-  delete (path) =>
+  delete (dynamic path) =>
       this._fetchRoute(this._deleteRouter, path);
 
-  get (path) =>
+  get (dynamic path) =>
       this._fetchRoute(this._getRouter, path);
 
-  post (path) =>
+  post (dynamic path) =>
       this._fetchRoute(this._postRouter, path);
 
-  put (path) =>
+  put (dynamic path) =>
       this._fetchRoute(this._putRouter, path);
 
-  Stream _fetchRoute (Router router, path) {
+  Route _fetchRoute (Router router, dynamic path) {
     var uri;
     
     if (path is Uri)
@@ -43,10 +43,8 @@ class _Creek implements Creek {
       throw new Exception('$path is of type ${path.runtimeType} when String or Uri were expected');
     
     Route node = router.findRoute(uri);
-    if (node.isClosed)
-      node.openStream();
 
-    return node.controller.stream;
+    return node;
   }
 
   void route (HttpRequest httpRequest) {
@@ -132,10 +130,10 @@ class _Creek implements Creek {
   }
 
   close () {
-    this._deleteRouter.rootRoute.closeStream(true);
-    this._getRouter.rootRoute.closeStream(true);
-    this._postRouter.rootRoute.closeStream(true);
-    this._putRouter.rootRoute.closeStream(true);
+    this._deleteRouter.rootRoute.close();
+    this._getRouter.rootRoute.close();
+    this._postRouter.rootRoute.close();
+    this._putRouter.rootRoute.close();
 
     for (StreamSubscription<HttpRequest> subs in this.serverSubscriptions)
       subs.cancel();

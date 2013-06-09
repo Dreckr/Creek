@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:creek/creek.dart';
+import 'package:creek/src/transformer.dart';
 import 'package:unittest/unittest.dart';
 import 'package:unittest/vm_config.dart';
 
@@ -16,7 +17,7 @@ void main() {
   useVMConfiguration();
 
   Creek creek = new Creek();
-
+  
   creek
     ..delete('/foo').listen((request) => send(request.response, 'Deleting success'))
     ..get('/foo').listen((request) => send(request.response, 'Getting success'))

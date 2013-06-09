@@ -47,7 +47,7 @@ abstract class Creek {
    * Creates a new DELETE route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and the subscription will be returned instead.
    */
-  Stream delete (path);
+  Route delete (path);
 
   /**
    * Creates a new GET route and returns it's [Stream].
@@ -55,7 +55,7 @@ abstract class Creek {
    * Creates a new GET route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  Stream get (path);
+  Route get (path);
 
   /**
    * Creates a new POST route and returns it's [Stream].
@@ -63,7 +63,7 @@ abstract class Creek {
    * Creates a new POST route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  Stream post (path);
+  Route post (path);
 
   /**
    * Creates a new PUT route and returns it's [Stream].
@@ -71,7 +71,7 @@ abstract class Creek {
    * Creates a new PUT route and returns it's [Stream]. An optional handler may be passed. If this handler is passed,
    * it will be used to listen to the stream and a [StreamSubscription] will be returned instead.
    */
-  Stream put (path);
+  Route put (path);
 
   /**
    * Takes a request and treats it with a defined handler.
@@ -123,4 +123,3 @@ class HttpServerSubscription implements StreamSubscription<HttpRequest> {
   
   Future asFuture([futureValue]) => this._subscription.asFuture(futureValue);
 }
-
