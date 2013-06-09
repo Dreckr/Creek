@@ -1,5 +1,5 @@
 name: creek
-version: 0.0.1-beta
+version: 0.0.1
 author: Diego Rocha <diego.rocha.comp@gmail.com>
 description: A simple web development framework with Sinatra looks and Dart power.
 homepage: https://github.com/Dreckr/Creek

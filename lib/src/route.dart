@@ -3,9 +3,34 @@ library route;
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
+import 'creek.dart';
 import 'utils.dart';
+import 'transformer.dart';
 
 part 'route_impl.dart';
+
+abstract class Router {
+  Creek creek;
+  Route rootRoute;
+  
+  factory Router (Creek creek) => new _Router(creek);
+  
+  /**
+   * Returns the node identified by the routeSteps.
+   *
+   * Searches the tree that has this node as root until it finds the node identified by this steps. If it doesn't find
+   * a node identified by this steps, all node necessary to reach it are created.
+   */
+  Route findRoute (Uri uri);
+
+  /**
+   * Passes the request to the appropriate stream and returns true if succeded.
+   *
+   * Searches the tree that has this node as root to find the node matching the request. If it is found and it's stream
+   * has a subscriber, the stream is feeded with the request, returning true. If not, returns false.
+   */
+  bool routeRequest (HttpRequest httpRequest);
+}
 
 /**
  * A node that forms routing trees.
@@ -23,6 +48,8 @@ part 'route_impl.dart';
  * feeded with the request. If not, the request is treated with the server's "not found" handler.
  */
 abstract class Route {
+  
+  Creek creek;
 
   /**
    * The type of this node's step.
@@ -37,29 +64,15 @@ abstract class Route {
   List<Route> get children;
 
   StreamController get controller;
+  
+  Stream get stream;
 
   bool get isClosed;
   
   Uri get uri;
 
-  factory Route (RouteType type, Uri uri) =>
-      new _Route(type, uri);
-
-  /**
-   * Returns the node identified by the routeSteps.
-   *
-   * Searches the tree that has this node as root until it finds the node identified by this steps. If it doesn't find
-   * a node identified by this steps, all node necessary to reach it are created.
-   */
-  Route findRoute (Uri uri);
-
-  /**
-   * Passes the request to the appropriate stream and returns true if succeded.
-   *
-   * Searches the tree that has this node as root to find the node matching the request. If it is found and it's stream
-   * has a subscriber, the stream is feeded with the request, returning true. If not, returns false.
-   */
-  bool routeRequest (HttpRequest httpRequest);
+  factory Route (Creek creek, RouteType type, Uri uri) =>
+      new _Route(creek, type, uri);
 
   /**
    * Opens a new stream.

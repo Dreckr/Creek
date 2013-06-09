@@ -1,6 +1,6 @@
-import '../lib/creek.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:creek/creek.dart';
 import 'package:unittest/unittest.dart';
 import 'package:unittest/vm_config.dart';
 
@@ -45,7 +45,7 @@ void main() {
     send(request.response, 'Howdy, stranger!');
   };
 
-  creek.bind(address, port).then(doTests,
+  creek.bind(address: address, port: port).then(doTests,
       onError: doTests);
 }
 

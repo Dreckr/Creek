@@ -1,82 +1,120 @@
 part of route;
 
+class _Router implements Router {
+  Creek creek;
+  Route rootRoute;
+  
+  _Router (Creek this.creek) {
+    this.rootRoute = new Route(this.creek, RouteType.STRICT, new Uri());
+  }
+  
+  Route findRoute (Uri uri) {
+    var route = this.rootRoute;
+    var pathSegments = uri.pathSegments;
+    var segmentIndex = 1;
+    var segment;
+    var routeType;
+    var found;
+    
+    while (pathSegments.length > segmentIndex) {
+      segment = pathSegments[segmentIndex];
+      
+
+      if (this.creek.configuration.genericPathIdentifiers.any((identifier) => segment.startsWith(identifier))) {
+        routeType = RouteType.GENERIC;
+      } else {
+        routeType = RouteType.STRICT;
+      }
+      
+      found = false;
+      for (var childRoute in route.children) {
+        if ((routeType == RouteType.STRICT && childRoute.uri.pathSegments.last == segment) ||
+            (childRoute.type == routeType && routeType != RouteType.STRICT)) {
+          route = childRoute;
+          found = true;
+          break;
+        }
+      }
+      
+      if (!found) {
+        var childRoute = new _Route(this.creek, routeType, copyUri(uri, untilPathSegment: segment));
+        route.children.add(childRoute);
+        route = childRoute;
+      }
+      
+      segmentIndex++;
+    }
+    
+    return route;
+  }
+  
+  bool routeRequest (HttpRequest httpRequest) {
+    var route = this.rootRoute;
+    var pathSegments = httpRequest.uri.pathSegments;
+    var segmentIndex = 1;
+    var segment;
+    var strictChild;
+    var genericChild;
+    
+    while (segmentIndex < pathSegments.length) {
+      segment = pathSegments[segmentIndex];
+      
+      strictChild = null;
+      genericChild = null;
+      for (var childRoute in route.children) {
+        if (childRoute.uri.pathSegments.last == segment) {
+          strictChild = childRoute;
+        } else if (childRoute.type == RouteType.GENERIC && strictChild == null) {
+          genericChild = childRoute;
+        }
+      }
+
+      if (strictChild != null)
+        route = strictChild;
+      else if (genericChild != null)
+        route = genericChild;
+      else
+        return false;
+      
+      segmentIndex++;
+    }
+    
+    if (!route.isClosed && !route.isPaused) {
+      route.controller.add(httpRequest);
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
 class _Route implements Route {
+  Creek creek;
   RouteType _type;
   RouteType get type => this._type;
   List<_Route> _children = [];
   List<Route> get children => this._children;
   StreamController _controller;
   StreamController get controller => this._controller;
+  Stream get stream => this._controller.stream;
   bool get isClosed => controller == null || controller.isClosed;
   bool get isPaused => this.isClosed || controller.isPaused || !controller.hasListener;
   Uri _uri;
   Uri get uri => this._uri;
 
-  _Route (this._type, this._uri);
-
-  Route findRoute (Uri uri) {
-    return this._findRoute(uri);
-  }
+  _Route (this.creek, this._type, this._uri);
   
-  Route _findRoute (Uri uri, [segmentIndex = 1]) {
-    var pathSegments = uri.pathSegments;
-    
-    if (pathSegments.length == segmentIndex) {
-      return this;
-    }
-
-    var segment = pathSegments[segmentIndex];
-    var routeType;
-
-    if (segment.startsWith('*') ||segment.startsWith(':')) {
-      routeType = RouteType.GENERIC;
-    } else {
-      routeType = RouteType.STRICT;
-    }
-
-    for (var child in this._children)
-      if ((routeType == RouteType.STRICT && child.uri.pathSegments.last == segment) ||
-          (child.type == routeType && routeType != RouteType.STRICT))
-        return child._findRoute(uri, segmentIndex + 1);
-
-    var childNode = new _Route(routeType, copyUri(uri, untilPathSegment: segment));
-    this.children.add(childNode);
-    return childNode._findRoute(uri, segmentIndex + 1);
-  }
-
-  bool routeRequest (HttpRequest httpRequest) {
-    return this._routeRequest(httpRequest);    
-  }
-  
-  bool _routeRequest (HttpRequest httpRequest, [segmentIndex = 1]) {
-    if (httpRequest.uri.pathSegments.length == segmentIndex) {
-      if (!this.isClosed && !this.isPaused) {
-        this.controller.add(httpRequest);
-        return true;
-      } else {
-        return false;
-      }
-    }
-
-    var segment = httpRequest.uri.pathSegments[segmentIndex];
-    var strictChild, genericChild;
-    for (var child in this.children) {
-      if (child.uri.pathSegments.last == segment) {
-        strictChild = child;
-      } else if (child.type == RouteType.GENERIC && strictChild == null) {
-        genericChild = child;
-      }
-    }
-
-    if (strictChild != null)
-      if(strictChild._routeRequest(httpRequest, segmentIndex + 1))
-        return true;
-
-    if (genericChild != null)
-      return genericChild._routeRequest(httpRequest, segmentIndex + 1);
-
-    return false;
-  }
+//  void use (StreamTransformer streamTransformer) {
+//    if (streamTransformer is CreekTransformer) {
+//      Stream<TransformationContext> transformationStream = this.stream.transform(
+//          new StreamTransformer<dynamic, TransformationContext>(
+//            handleData: 
+//              (request, eventSink) => 
+//                eventSink.add(new TransformationContext(this.creek, this, request))));
+//      
+//      transformationStream.transform(streamTransformer);
+//    }
+//  }
 
   void openStream () {
     if (this.isClosed)

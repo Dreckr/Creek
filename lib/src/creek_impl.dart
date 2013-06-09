@@ -1,30 +1,38 @@
-part of server;
+part of creek;
 
 class _Creek implements Creek {
-  Route _deleteTree = new Route(RouteType.STRICT, new Uri());
-  Route _getTree = new Route(RouteType.STRICT, new Uri());
-  Route _postTree = new Route(RouteType.STRICT, new Uri());
-  Route _putTree = new Route(RouteType.STRICT, new Uri());
+  CreekConfiguration configuration = new CreekConfiguration();
+  
+  Router _deleteRouter;
+  Router _getRouter;
+  Router _postRouter;
+  Router _putRouter;
+  
   NotFoundHandler notFoundHandler;
   List<HttpServerSubscription> serverSubscriptions = [];
   var _onErrorHandler;
   var _onDoneHandler;
 
-  _Creek ();
+  _Creek () {
+    this._deleteRouter = new Router(this);
+    this._getRouter = new Router(this);
+    this._postRouter = new Router(this);
+    this._putRouter = new Router(this);
+  }
 
   delete (path) =>
-      this._fetchRoute(this._deleteTree, path);
+      this._fetchRoute(this._deleteRouter, path);
 
   get (path) =>
-      this._fetchRoute(this._getTree, path);
+      this._fetchRoute(this._getRouter, path);
 
   post (path) =>
-      this._fetchRoute(this._postTree, path);
+      this._fetchRoute(this._postRouter, path);
 
   put (path) =>
-      this._fetchRoute(this._putTree, path);
+      this._fetchRoute(this._putRouter, path);
 
-  Stream _fetchRoute (Route routeTree, path) {
+  Stream _fetchRoute (Router router, path) {
     var uri;
     
     if (path is Uri)
@@ -34,7 +42,7 @@ class _Creek implements Creek {
     else
       throw new Exception('$path is of type ${path.runtimeType} when String or Uri were expected');
     
-    Route node = routeTree.findRoute(uri);
+    Route node = router.findRoute(uri);
     if (node.isClosed)
       node.openStream();
 
@@ -43,20 +51,20 @@ class _Creek implements Creek {
 
   void route (HttpRequest httpRequest) {
     HttpResponse httpResponse = httpRequest.response;
-    Route tree;
+    Router router;
 
     switch (httpRequest.method) {
       case 'DELETE':
-        tree = this._deleteTree;
+        router = this._deleteRouter;
         break;
       case 'GET':
-        tree = this._getTree;
+        router = this._getRouter;
         break;
       case 'POST':
-        tree = this._postTree;
+        router = this._postRouter;
         break;
       case 'PUT':
-        tree = this._putTree;
+        router = this._putRouter;
         break;
       default:
         httpResponse.statusCode = HttpStatus.NOT_FOUND;
@@ -64,7 +72,7 @@ class _Creek implements Creek {
         return;
     }
 
-    if (!tree.routeRequest(httpRequest)) {
+    if (!router.routeRequest(httpRequest)) {
       if (this.notFoundHandler == null) {
         httpResponse.statusCode = HttpStatus.NOT_FOUND;
         httpResponse.close();
@@ -74,13 +82,18 @@ class _Creek implements Creek {
     }
   }
 
-  Future<HttpServerSubscription> bind ([serverOrAddress, port = 0, backlog = 0]) {
+  Future<HttpServerSubscription> bind ({HttpServer server, String address, int port: 0, int backlog: 0}) {
+    if (server == null && address == null)
+      throw new Exception('No HttpServer or Address specified. Please set one of this arguments.');
+    else if (server != null && address != null)
+      throw new Exception('HttpServer and Address specified. Please set only one of this arguments.');
+    
     Completer<HttpServerSubscription> completer = new Completer<HttpServerSubscription>();
-    if (serverOrAddress is HttpServer) {
-      completer.complete(this._bind(serverOrAddress));
+    if (server != null) {
+      completer.complete(this._bind(server));
     } else {
-      HttpServer.bind(serverOrAddress, port, backlog: backlog).then(
-          (HttpServer server) => completer.complete(this._bind(server)),
+      HttpServer.bind(address, port, backlog: backlog).then(
+          (HttpServer _server) => completer.complete(this._bind(_server)),
           onError: (error) => completer.completeError(error)
       );
 
@@ -119,10 +132,10 @@ class _Creek implements Creek {
   }
 
   close () {
-    this._deleteTree.closeStream(true);
-    this._getTree.closeStream(true);
-    this._postTree.closeStream(true);
-    this._putTree.closeStream(true);
+    this._deleteRouter.rootRoute.closeStream(true);
+    this._getRouter.rootRoute.closeStream(true);
+    this._postRouter.rootRoute.closeStream(true);
+    this._putRouter.rootRoute.closeStream(true);
 
     for (StreamSubscription<HttpRequest> subs in this.serverSubscriptions)
       subs.cancel();

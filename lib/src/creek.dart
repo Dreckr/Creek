@@ -1,4 +1,4 @@
-library server;
+library creek;
 
 import 'route.dart';
 import 'dart:async';
@@ -30,6 +30,8 @@ typedef void NotFoundHandler (HttpRequest request);
  * arguments.
  */
 abstract class Creek {
+  CreekConfiguration configuration;
+  
   /// Handler used when there is no route for a HttpRequest
   NotFoundHandler notFoundHandler;
 
@@ -79,7 +81,7 @@ abstract class Creek {
   /**
    * Creates a [HttpServer] by listening to the specified address and port.
    */
-  Future<HttpServerSubscription> bind ([serverOrAddress, port, backlog]);
+  Future<HttpServerSubscription> bind ({HttpServer server, String address, int port, int backlog});
 
   void onError (void onErrorHandler (error));
 
@@ -90,6 +92,10 @@ abstract class Creek {
    */
   close ();
 
+}
+
+class CreekConfiguration {
+  final Set<String> genericPathIdentifiers = new Set.from(['*']);
 }
 
 /**
