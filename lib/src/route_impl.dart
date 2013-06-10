@@ -1,11 +1,16 @@
 part of route;
 
 class _Router implements Router {
-  Creek creek;
+  CreekConfiguration configuration;
   Route rootRoute;
   
-  _Router (Creek this.creek) {
-    this.rootRoute = new Route(this.creek, RouteType.STRICT, new Uri());
+  _Router () {
+    this.configuration = new CreekConfiguration();
+    this.rootRoute = new Route.withConfiguration(this.configuration, RouteType.STRICT, new Uri());
+  }
+  
+  _Router.withConfiguration (CreekConfiguration this.configuration) {
+    this.rootRoute = new Route.withConfiguration(this.configuration, RouteType.STRICT, new Uri());
   }
   
   Route findRoute (Uri uri) {
@@ -20,7 +25,7 @@ class _Router implements Router {
       segment = pathSegments[segmentIndex];
       
 
-      if (this.creek.configuration.genericPathIdentifiers.any((identifier) => segment.startsWith(identifier))) {
+      if (this.configuration.genericPathIdentifiers.any((identifier) => segment.startsWith(identifier))) {
         routeType = RouteType.GENERIC;
       } else {
         routeType = RouteType.STRICT;
@@ -37,7 +42,10 @@ class _Router implements Router {
       }
       
       if (!found) {
-        var childRoute = new _Route(this.creek, routeType, copyUri(uri, untilPathSegment: segment));
+        var childRoute = new Route.withConfiguration(
+                                      this.configuration, 
+                                      routeType, 
+                                      copyUri(uri, untilPathSegment: segment));
         route.children.add(childRoute);
         route = childRoute;
       }
@@ -88,7 +96,7 @@ class _Router implements Router {
 }
 
 class _Route extends Stream implements Route {
-  Creek creek;
+  CreekConfiguration configuration;
   RouteType _type;
   RouteType get type => this._type;
   List<_Route> _children = [];
@@ -100,7 +108,13 @@ class _Route extends Stream implements Route {
   Uri _uri;
   Uri get uri => this._uri;
 
-  _Route (this.creek, this._type, this._uri) {
+  _Route (this._type, this._uri) {
+    this.configuration = new CreekConfiguration();
+    this._controller = new StreamController<HttpRequest>();
+    this._stream = this._controller.stream;
+  }
+  
+  _Route.withConfiguration (this.configuration, this._type, this._uri) {
     this._controller = new StreamController<HttpRequest>();
     this._stream = this._controller.stream;
   }
@@ -119,7 +133,7 @@ class _Route extends Stream implements Route {
   
   Stream transform (StreamTransformer streamTransformer) {
     if (streamTransformer is CreekContextTransformer) {
-      this._stream = streamTransformer.bind(this._stream.transform(new ContextHandler(this.creek, this)));
+      this._stream = streamTransformer.bind(this._stream.transform(new ContextHandler(this)));
     } else {
       this._stream = streamTransformer.bind(this._stream);
     }

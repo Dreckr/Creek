@@ -7,12 +7,6 @@ import 'route.dart';
 
 part 'transformer_impl.dart';
 
-//var keyTransformer = new CreekContextTransformer<HttpRequest, HttpRequest>(handleData:
-//  (CreekContext context, EventSink sink) {
-//    print(context.route.uri);
-//    sink.add(context.request);
-//  });
-
 abstract class CreekContextTransformer <S, T> implements StreamTransformer <CreekContext<S>, T> {
   
   factory CreekContextTransformer ({
@@ -26,22 +20,21 @@ abstract class CreekContextTransformer <S, T> implements StreamTransformer <Cree
 }
 
 class CreekContext <S> {
-  Creek creek;
   Route route;
   S request;
   
-  CreekContext (this.creek, this.route, this.request);
+  CreekContext (this.route, this.request);
 }
 
 class ContextHandler<S> implements StreamTransformer <S, CreekContext<S>> {
   StreamTransformer _transformer;
   
-  ContextHandler (Creek creek, Route route) : 
+  ContextHandler (Route route) : 
     _transformer = 
       new StreamTransformer<dynamic, CreekContext>(
           handleData: 
             (request, eventSink) => 
-                eventSink.add(new CreekContext(creek, route, request)));
+                eventSink.add(new CreekContext(route, request)));
   
   Stream bind (Stream stream) =>  this._transformer.bind(stream);
 }

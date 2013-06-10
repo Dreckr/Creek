@@ -10,10 +10,12 @@ import 'transformer.dart';
 part 'route_impl.dart';
 
 abstract class Router {
-  Creek creek;
+  CreekConfiguration configuration;
   Route rootRoute;
   
-  factory Router (Creek creek) => new _Router(creek);
+  factory Router () => new _Router();
+  
+  factory Router.withConfiguration (CreekConfiguration configuration) => new _Router.withConfiguration(configuration);
   
   /**
    * Returns the node identified by the routeSteps.
@@ -49,7 +51,7 @@ abstract class Router {
  */
 abstract class Route implements Stream, EventSink {
   
-  Creek creek;
+  CreekConfiguration configuration;
 
   /**
    * The type of this node's step.
@@ -64,9 +66,12 @@ abstract class Route implements Stream, EventSink {
   List<Route> get children;
   
   Uri get uri;
+  
+  factory Route (RouteType type, Uri uri) =>
+      new _Route(type, uri);
 
-  factory Route (Creek creek, RouteType type, Uri uri) =>
-      new _Route(creek, type, uri);
+  factory Route.withConfiguration (CreekConfiguration configuration, RouteType type, Uri uri) =>
+      new _Route.withConfiguration(configuration, type, uri);
 
 }
 

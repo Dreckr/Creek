@@ -14,10 +14,10 @@ class _Creek implements Creek {
   var _onDoneHandler;
 
   _Creek () {
-    this._deleteRouter = new Router(this);
-    this._getRouter = new Router(this);
-    this._postRouter = new Router(this);
-    this._putRouter = new Router(this);
+    this._deleteRouter = new Router.withConfiguration(configuration);
+    this._getRouter = new Router.withConfiguration(configuration);
+    this._postRouter = new Router.withConfiguration(configuration);
+    this._putRouter = new Router.withConfiguration(configuration);
   }
 
   delete (dynamic path) =>
