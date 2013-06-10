@@ -42,9 +42,9 @@ class _Creek implements Creek {
     else
       throw new Exception('$path is of type ${path.runtimeType} when String or Uri were expected');
     
-    Route node = router.findRoute(uri);
+    var route = router.findRoute(uri);
 
-    return node;
+    return route;
   }
 
   void route (HttpRequest httpRequest) {

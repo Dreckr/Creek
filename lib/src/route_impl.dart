@@ -16,7 +16,7 @@ class _Router implements Router {
   Route findRoute (Uri uri) {
     var route = this.rootRoute;
     var pathSegments = uri.pathSegments;
-    var segmentIndex = 1;
+    var segmentIndex = 0;
     var segment;
     var routeType;
     var found;
@@ -59,7 +59,7 @@ class _Router implements Router {
   bool routeRequest (HttpRequest httpRequest) {
     var route = this.rootRoute;
     var pathSegments = httpRequest.uri.pathSegments;
-    var segmentIndex = 1;
+    var segmentIndex = 0;
     var segment;
     var strictChild;
     var genericChild;
