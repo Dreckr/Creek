@@ -1,15 +1,15 @@
 part of route;
 
 class _Router implements Router {
-  CreekConfiguration configuration;
+  RouterConfiguration configuration;
   Route rootRoute;
   
   _Router () {
-    this.configuration = new CreekConfiguration();
+    this.configuration = new RouterConfiguration();
     this.rootRoute = new Route.withConfiguration(this.configuration, RouteType.STRICT, new Uri());
   }
   
-  _Router.withConfiguration (CreekConfiguration this.configuration) {
+  _Router.withConfiguration (RouterConfiguration this.configuration) {
     this.rootRoute = new Route.withConfiguration(this.configuration, RouteType.STRICT, new Uri());
   }
   
@@ -96,7 +96,7 @@ class _Router implements Router {
 }
 
 class _Route extends Stream implements Route {
-  CreekConfiguration configuration;
+  RouterConfiguration configuration;
   RouteType _type;
   RouteType get type => this._type;
   List<_Route> _children = [];
@@ -109,7 +109,7 @@ class _Route extends Stream implements Route {
   Uri get uri => this._uri;
 
   _Route (this._type, this._uri) {
-    this.configuration = new CreekConfiguration();
+    this.configuration = new RouterConfiguration();
     this._controller = new StreamController<HttpRequest>();
     this._stream = this._controller.stream;
   }

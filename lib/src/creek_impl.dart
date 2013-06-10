@@ -1,7 +1,7 @@
 part of creek;
 
 class _Creek implements Creek {
-  CreekConfiguration configuration = new CreekConfiguration();
+  RouterConfiguration configuration = new RouterConfiguration();
   
   Router _deleteRouter;
   Router _getRouter;

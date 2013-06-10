@@ -30,7 +30,7 @@ typedef void NotFoundHandler (HttpRequest request);
  * arguments.
  */
 abstract class Creek {
-  CreekConfiguration configuration;
+  RouterConfiguration configuration;
   
   /// Handler used when there is no route for a HttpRequest
   NotFoundHandler notFoundHandler;
@@ -94,7 +94,7 @@ abstract class Creek {
 
 }
 
-class CreekConfiguration {
+class RouterConfiguration {
   final Set<String> genericPathIdentifiers = new Set.from(['*']);
 }
 
