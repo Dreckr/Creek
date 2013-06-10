@@ -25,10 +25,10 @@ void main() {
     ..put('/foo').listen((request) => send(request.response, 'Putting success'));
 
   creek
-    ..delete('/*').listen((request) => send(request.response, 'Generic delete'))
-    ..get('/*').listen((request) => send(request.response, 'Generic get'))
-    ..post('/*').listen((request) => send(request.response, 'Generic post'))
-    ..put('/*').listen((request) => send(request.response, 'Generic put'));
+    ..delete('/bar/*').listen((request) => send(request.response, 'Generic delete'))
+    ..get('/bar/*').listen((request) => send(request.response, 'Generic get'))
+    ..post('/bar/*').listen((request) => send(request.response, 'Generic post'))
+    ..put('/bar/*').listen((request) => send(request.response, 'Generic put'));
 
   creek
     ..get('/filtered').where((request) {
@@ -96,7 +96,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic delete route', () {
-      client.open('DELETE', address, port, '/bar').then(expectAsync1((req) {
+      client.open('DELETE', address, port, '/bar/something').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic delete')));
@@ -105,7 +105,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic get route', () {
-      client.open('GET', address, port, '/bar').then(expectAsync1((req) {
+      client.open('GET', address, port, '/bar/something').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic get')));
@@ -114,7 +114,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic post route', () {
-      client.open('POST', address, port, '/bar').then(expectAsync1((req) {
+      client.open('POST', address, port, '/bar/something').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic post')));
@@ -123,7 +123,7 @@ void doTests (HttpServerSubscription serverSubscription) {
     });
 
     test('generic put route', () {
-      client.open('PUT', address, port, '/bar').then(expectAsync1((req) {
+      client.open('PUT', address, port, '/bar/something').then(expectAsync1((req) {
         req.close().then(expectAsync1((res) {
           expect(res.statusCode, equals(HttpStatus.OK));
           res.listen((chars) => expect(new String.fromCharCodes(chars), equals('Generic put')));

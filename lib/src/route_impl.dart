@@ -60,7 +60,6 @@ class _Router implements Router {
       segment = pathSegments[segmentIndex];
       
       strictChild = null;
-      genericChild = null;
       for (var childRoute in route.children) {
         if (childRoute.uri.pathSegments.last == segment) {
           strictChild = childRoute;
