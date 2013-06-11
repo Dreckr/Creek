@@ -1,9 +1,9 @@
 name: creek
-version: 0.0.1
+version: 0.0.2
 author: Diego Rocha <diego.rocha.comp@gmail.com>
-description: A simple web development framework with Sinatra looks and Dart power.
+description: A simple http server routing system.
 homepage: https://github.com/Dreckr/Creek
 environment:
-  sdk: '>=0.4.7'
+  sdk: '>=0.5.16'
 dev_dependencies:
   unittest: '>=0.4.7'

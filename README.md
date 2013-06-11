@@ -2,6 +2,10 @@ Creek
 =====
 [![Build Status](https://drone.io/github.com/Dreckr/Creek/status.png)](https://drone.io/github.com/Dreckr/Creek/latest)
 
+Notice
+------
+This README and all documentation have to be updated. For functional examples, see how tests are done.
+
 A simple web development framework with Sinatra looks and Dart power.
 
 Creek is a web development framework that let's you feel at home while you take advantage of Dart. It does
