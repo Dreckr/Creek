@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:creek/creek.dart';
-import 'package:creek/src/transformer.dart';
 import 'package:unittest/unittest.dart';
 import 'package:unittest/vm_config.dart';
 

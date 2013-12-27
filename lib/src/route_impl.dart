@@ -121,10 +121,11 @@ class _Route extends Stream implements Route {
   
   void add (event) => this._controller.add(event);
   
-  void addError (errorEvent) => this._controller.addError(errorEvent);
+  void addError (errorEvent, [StackTrace stackTrace]) => 
+      this._controller.addError(errorEvent, stackTrace);
   
   StreamSubscription listen(void onData(value),
-      { void onError(error),
+      { Function onError,
         void onDone(),
         bool cancelOnError }) {
     return this._stream.listen(onData, onError: onError, onDone: onDone,

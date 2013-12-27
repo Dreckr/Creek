@@ -5,9 +5,9 @@ class _CreekContextTransformer <S, T> implements CreekContextTransformer <S, T> 
   
   _CreekContextTransformer ({
     void handleData(CreekContext<S> data, EventSink<T> sink),
-    void handleError(error, EventSink<T> sink),
+    void handleError(error, StackTrace stackTrace, EventSink<T> sink),
     void handleDone(EventSink<T> sink)}) {
-    this._streamTransformer = new StreamTransformer(
+    this._streamTransformer = new StreamTransformer.fromHandlers(
         handleData: handleData, 
         handleError: handleError, 
         handleDone: handleDone);

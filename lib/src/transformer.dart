@@ -1,8 +1,6 @@
 library transformer;
 
 import 'dart:async';
-import 'dart:io';
-import 'creek.dart';
 import 'route.dart';
 
 part 'transformer_impl.dart';
@@ -11,7 +9,7 @@ abstract class CreekContextTransformer <S, T> implements StreamTransformer <Cree
   
   factory CreekContextTransformer ({
     void handleData(CreekContext<S> data, EventSink<T> sink),
-    void handleError(error, EventSink<T> sink),
+    void handleError(error, StackTrace stackTrace, EventSink<T> sink),
     void handleDone(EventSink<T> sink)}) => 
       new _CreekContextTransformer(handleData: handleData, handleError: handleError, handleDone: handleDone);
   
@@ -31,7 +29,7 @@ class ContextHandler<S> implements StreamTransformer <S, CreekContext<S>> {
   
   ContextHandler (Route route) : 
     _transformer = 
-      new StreamTransformer<dynamic, CreekContext>(
+      new StreamTransformer<dynamic, CreekContext>.fromHandlers(
           handleData: 
             (request, eventSink) => 
                 eventSink.add(new CreekContext(route, request)));

@@ -109,7 +109,7 @@ class HttpServerSubscription implements StreamSubscription<HttpRequest> {
 
   HttpServerSubscription._(this._subscription, this.server);
 
-  void cancel () => this._subscription.cancel();
+  Future cancel () => this._subscription.cancel();
 
   void onData(handleData) => this._subscription.onData(handleData);
 

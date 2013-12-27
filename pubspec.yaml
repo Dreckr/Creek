@@ -1,9 +1,9 @@
 name: creek
-version: 0.0.2
 author: Diego Rocha <diego.rocha.comp@gmail.com>
-description: A simple http server routing system.
+version: 0.0.2
 homepage: https://github.com/Dreckr/Creek
+description: A simple http server routing system.
 environment:
-  sdk: '>=0.5.16'
+  sdk: '>=1.0.0'
 dev_dependencies:
-  unittest: '>=0.4.7'
+  unittest: '>=0.5.16'
